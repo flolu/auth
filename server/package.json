@@ -1,5 +1,8 @@
 {
   "private": true,
+  "scripts": {
+    "dev": "ts-node-dev --project tsconfig.json index.ts"
+  },
   "dependencies": {
     "express": "^4.17.1"
   },

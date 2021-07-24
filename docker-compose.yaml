@@ -6,6 +6,6 @@ services:
     volumes:
       - ./server:/server
     ports:
-      - "3001:3000"
+      - "3001:3001"
     working_dir: /server
     command: yarn run ts-node-dev --project tsconfig.json index.ts
