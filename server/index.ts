@@ -5,9 +5,12 @@ import {Container} from 'inversify'
 import {InversifyExpressServer} from 'inversify-express-utils'
 
 import {authModule} from './auth'
+import {ConfigService} from './config.service'
 import {userModule} from './user'
 
 let container = new Container()
+
+container.bind(ConfigService).toSelf().inSingletonScope()
 
 container.load(authModule)
 container.load(userModule)
