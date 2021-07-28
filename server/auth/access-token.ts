@@ -15,6 +15,12 @@ export class AccessToken extends Token<AccessTokenPayload> {
     return new AccessToken(decoded.userId)
   }
 
+  static tryFromString(token: string, secret: string) {
+    try {
+      return AccessToken.fromString(token, secret)
+    } catch (e) {}
+  }
+
   protected get serializedPayload() {
     return {
       userId: this.userId,

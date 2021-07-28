@@ -22,6 +22,11 @@ export class UserService {
     )
   }
 
+  async getById(id: string) {
+    const collection = await this.usersCollection()
+    return collection.findOne({id})
+  }
+
   async getByGitHubUserId(gitHubUserId: number) {
     const collection = await this.usersCollection()
     return collection.findOne({gitHubUserId: gitHubUserId.toString()})
