@@ -4,6 +4,7 @@ import {BaseMiddleware} from 'inversify-express-utils'
 
 import {ConfigService} from '../config.service'
 import {AccessToken} from './access-token'
+import {Cookies} from './cookies'
 
 @injectable()
 export class AuthMiddleware extends BaseMiddleware {
@@ -13,9 +14,7 @@ export class AuthMiddleware extends BaseMiddleware {
 
   async handler(req: Request, res: Response, next: NextFunction) {
     try {
-      const header = req.headers.authorization
-      const tokenString = header ? header.split(' ')[1] : ''
-      if (!tokenString) return next(new Error('Not Signed in'))
+      const tokenString = req.cookies[Cookies.AccessToken]
       const token = AccessToken.tryFromString(
         tokenString,
         this.config.accessTokenSecret

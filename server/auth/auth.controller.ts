@@ -33,8 +33,19 @@ export class AuthController implements interfaces.Controller {
     }
 
     const {accessToken, refreshToken} = this.authService.createTokens(user)
-    this.setAccessTokenCookie(accessToken, res)
-    this.setRefreshTokenCookie(refreshToken, res)
+    res.cookie(
+      Cookies.AccessToken,
+      accessToken.sign(this.config.accessTokenSecret),
+      {
+        ...this.cookieOptions,
+        maxAge: TokenExpiration.Access * 1000,
+      }
+    )
+    res.cookie(
+      Cookies.RefreshToken,
+      refreshToken.sign(this.config.refreshTokenSecret),
+      {...this.cookieOptions, maxAge: TokenExpiration.Refresh * 1000}
+    )
 
     res.redirect(`${this.config.clientUrl}${path}`)
   }
@@ -57,17 +68,5 @@ export class AuthController implements interfaces.Controller {
     sameSite: this.config.isProduction ? 'strict' : 'lax',
     domain: this.config.baseDomain,
     path: '/',
-  }
-
-  private setAccessTokenCookie(token: AccessToken, res: Response) {
-    const options = {...this.cookieOptions, maxAge: TokenExpiration.Access}
-    const signedToken = token.sign(this.config.accessTokenSecret)
-    res.cookie(Cookies.AccessToken, signedToken, options)
-  }
-
-  private setRefreshTokenCookie(token: RefreshToken, res: Response) {
-    const options = {...this.cookieOptions, maxAge: TokenExpiration.Refresh}
-    const signedToken = token.sign(this.config.refreshTokenSecret)
-    res.cookie(Cookies.RefreshToken, signedToken, options)
   }
 }
