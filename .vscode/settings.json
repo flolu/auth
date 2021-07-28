@@ -3,5 +3,5 @@
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "cSpell.words": ["inversify"]
+  "cSpell.words": ["MONGODB", "inversify", "uuidv"]
 }

@@ -1,7 +1,5 @@
 import {injectable} from 'inversify'
 
-// TODO configure and read environment variables
-
 @injectable()
 export class ConfigService {
   public readonly environment = process.env.NODE_ENV!
@@ -14,4 +12,9 @@ export class ConfigService {
 
   public readonly gitHubClientId = process.env.GITHUB_CLIENT_ID!
   public readonly gitHubClientSecret = process.env.GITHUB_CLIENT_SECRET!
+
+  public readonly mongoURL = process.env.MONGODB_URL!
+  public readonly mongoUser = process.env.MONGODB_USER!
+  public readonly mongoPassword = process.env.MONGODB_PASSWORD!
+  public readonly mongoDatabase = process.env.MONGODB_DATABASE!
 }

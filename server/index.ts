@@ -6,6 +6,7 @@ import {InversifyExpressServer} from 'inversify-express-utils'
 
 import {authModule} from './auth'
 import {ConfigService} from './config.service'
+import {Database} from './database'
 import {IndexController} from './index.controller'
 import {userModule} from './user'
 
@@ -13,6 +14,7 @@ let container = new Container()
 
 container.bind(IndexController).toSelf().inSingletonScope()
 container.bind(ConfigService).toSelf().inSingletonScope()
+container.bind(Database).toSelf().inSingletonScope()
 
 container.load(authModule)
 container.load(userModule)

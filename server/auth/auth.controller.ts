@@ -26,12 +26,17 @@ export class AuthController implements interfaces.Controller {
     const {code, path} = req.query
 
     const gitHubUser = await this.gitHubAdapter.getUser(code as string)
-    const user = await this.userService.create(gitHubUser.name)
-    const {accessToken, refreshToken} = this.authService.createTokens(user)
 
+    let user = await this.userService.getByGitHubUserId(gitHubUser.id)
+    if (!user) {
+      user = await this.userService.create(gitHubUser.name, gitHubUser.id)
+    }
+
+    const {accessToken, refreshToken} = this.authService.createTokens(user)
     this.setAccessTokenCookie(accessToken, res)
     this.setRefreshTokenCookie(refreshToken, res)
-    res.redirect(`${this.config.clientUrl}/${path}`)
+
+    res.redirect(`${this.config.clientUrl}${path}`)
   }
 
   @httpPost('/refresh')

@@ -10,3 +10,12 @@ services:
     working_dir: /server
     command: yarn run ts-node-dev --project tsconfig.json index.ts
     env_file: .env.development
+
+  mongodb:
+    image: mongo:5
+    container_name: ssr-auth_mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: K7H6cWFUgLdYO5RBfh8YWzbOCiJnMkQZ
