@@ -1,3 +1,4 @@
+import Router from 'next/router'
 import {useEffect, useState} from 'react'
 
 import {useApi} from '../contexts/api.context'
@@ -18,10 +19,26 @@ export default function Me() {
     getMe()
   }, [])
 
+  const onLogout = async () => {
+    await api.post(`${environment.apiUrl}/auth/logout`)
+    Router.replace('/')
+  }
+
+  const onLogoutAll = async () => {
+    await api.post(`${environment.apiUrl}/auth/logout-all`)
+    Router.replace('/')
+  }
+
   return (
     <main>
       <h1>Me</h1>
-      {user && <pre>{JSON.stringify(user, null, 2)}</pre>}
+      {user && (
+        <div>
+          <pre>{JSON.stringify(user, null, 2)}</pre>
+          <button onClick={onLogout}>Logout</button>
+          <button onClick={onLogoutAll}>Logout All</button>
+        </div>
+      )}
       {error && <pre>{JSON.stringify(error, null, 2)}</pre>}
     </main>
   )

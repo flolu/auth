@@ -34,7 +34,10 @@ server.setConfig(app => {
 
 server.setErrorConfig(app => {
   app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-    console.error(err)
+    if (!res.statusCode) {
+      console.error(err)
+      res.status(500)
+    }
     res.send(err.message)
   })
 })

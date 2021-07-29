@@ -2,6 +2,7 @@ import {CookieOptions, Request, Response} from 'express'
 import {controller, httpGet, httpPost, interfaces} from 'inversify-express-utils'
 
 import {ConfigService} from '../config.service'
+import {ResponseWithToken} from '../types'
 import {UserService} from '../user/user.service'
 import {AccessToken} from './access-token'
 import {AuthMiddleware} from './auth.middleware'
@@ -88,10 +89,15 @@ export class AuthController implements interfaces.Controller {
   }
 
   @httpPost('/logout', AuthMiddleware)
-  async logout() {}
+  async logout(_req: Request, res: Response) {
+    this.clearTokens(res)
+  }
 
   @httpPost('/logout-all', AuthMiddleware)
-  async logoutAll() {}
+  async logoutAll(_req: Request, res: ResponseWithToken) {
+    await this.userService.increaseTokenVersion(res.locals.token.userId)
+    this.clearTokens(res as unknown as Response)
+  }
 
   private readonly cookieOptions: CookieOptions = {
     httpOnly: true,
@@ -124,5 +130,10 @@ export class AuthController implements interfaces.Controller {
         }
       )
     }
+  }
+
+  private clearTokens(res: Response) {
+    res.cookie(Cookies.AccessToken, '', {maxAge: 0})
+    res.cookie(Cookies.RefreshToken, '', {maxAge: 0})
   }
 }

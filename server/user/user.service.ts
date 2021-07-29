@@ -45,6 +45,16 @@ export class UserService {
     throw new Error()
   }
 
+  async increaseTokenVersion(userId: string) {
+    const collection = await this.usersCollection()
+    const result = await collection.findOneAndUpdate(
+      {id: userId},
+      {$inc: {tokenVersion: 1}}
+    )
+    if (result.ok) return result.value
+    throw new Error()
+  }
+
   private usersCollection() {
     return this.database.collection<UserDocument>('users')
   }
