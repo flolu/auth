@@ -6,7 +6,7 @@ import {AuthService} from './auth.service'
 import {GitHubAdapter} from './github.adapter'
 import {InternalMiddleware} from './internal.middleware'
 
-export const authModule = new ContainerModule((bind) => {
+export const authModule = new ContainerModule(bind => {
   bind(AuthController).toSelf()
   bind(AuthService).toSelf()
   bind(AuthMiddleware).toSelf()

@@ -2,6 +2,7 @@ import 'reflect-metadata'
 
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
+import {NextFunction, Request, Response} from 'express'
 import {Container} from 'inversify'
 import {InversifyExpressServer} from 'inversify-express-utils'
 
@@ -24,12 +25,19 @@ container.load(userModule)
 const server = new InversifyExpressServer(container)
 const config = container.get(ConfigService)
 
-server.setConfig((app) => {
+server.setConfig(app => {
   app.use(corsMiddleware(config.isProduction, config.clientUrl))
   app.use(bodyParser.urlencoded({extended: true}))
   app.use(bodyParser.json())
   app.use(cookieParser())
 })
 
-const app = server.build()
-app.listen(3000, () => console.log('Server started'))
+server.setErrorConfig(app => {
+  app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+    console.error(err)
+    res.status(500)
+    res.send(err.message || 'Unexpected error')
+  })
+})
+
+server.build().listen(3000, () => console.log('Server started'))
