@@ -39,4 +39,4 @@ server.setErrorConfig(app => {
   })
 })
 
-server.build().listen(3000, () => console.log('Server started'))
+server.build().listen(3000)

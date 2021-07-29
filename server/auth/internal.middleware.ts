@@ -11,8 +11,8 @@ export class InternalMiddleware extends BaseMiddleware {
   }
 
   handler(req: Request, _res: Response, next: NextFunction) {
-    const secret = req.headers['Authorization']
-    if (secret === this.config.internalSecret) next()
+    const secret = req.headers.authorization
+    if (secret === this.config.internalSecret) return next()
     return next(new Error('Invalid internal secret'))
   }
 }

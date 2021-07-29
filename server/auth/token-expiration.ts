@@ -4,10 +4,7 @@ enum TimeSeconds {
 }
 
 export enum TokenExpiration {
-  // TODO revert back to 5 minutes
-  // Access = 5 * TimeSeconds.OneMinute,
-  Access = 5,
+  Access = 5 * TimeSeconds.OneMinute,
   Refresh = 7 * TimeSeconds.OneDay,
-  // Refresh the refresh token after 3 days of usage
   RefreshIfLessThan = TokenExpiration.Refresh - 3 * TimeSeconds.OneDay,
 }

@@ -1,3 +1,4 @@
+import axios from 'axios'
 import cookie from 'cookie'
 import {IncomingMessage, ServerResponse} from 'http'
 
@@ -11,29 +12,36 @@ export class ServerApi extends Api {
   private readonly accessTokenExpiration = 5 * 60 // 5 minutes
   private readonly refreshTokenExpiration = 7 * 24 * 60 * 60 // 7 days
 
-  private constructor(
+  private accessToken: string | undefined
+
+  constructor(
     private readonly req: IncomingMessage,
     private readonly res: ServerResponse
   ) {
     super()
   }
 
+  buildHeaders() {
+    return {Authorization: this.getAccessToken()}
+  }
+
   async refreshTokens() {
-    const cookieHeader = this.req.headers.cookie
-    const currentRefreshToken =
-      cookieHeader && cookie.parse(cookieHeader)[this.refreshTokenCookie]
+    const currentRefreshToken = this.getRefreshToken()
     if (!currentRefreshToken) throw 'No refresh token'
 
     try {
       const payload = {refreshToken: currentRefreshToken}
-      const [error, data] = await this.post<any>(
+      const response = await axios.post<any>(
         `${environment.apiUrl}/auth/refresh-ssr`,
         payload,
-        {Authorization: environment.internalSecret}
+        {
+          headers: {Authorization: environment.internalSecret},
+          withCredentials: true,
+        }
       )
-      if (error || !data) throw error
-      const {accessToken, refreshToken} = data
+      const {accessToken, refreshToken} = response.data
       this.setCookies(accessToken, refreshToken)
+      this.accessToken = accessToken
     } catch (err) {
       if (err === 'Token revoked') {
         this.clearCookies()
@@ -60,7 +68,6 @@ export class ServerApi extends Api {
     if (refreshToken) {
       this.res.setHeader(
         'Set-Cookie',
-        // TODO check if this works properly
         `${refreshTokenCookie}; ${accessTokenCookie};`
       )
     } else {
@@ -89,5 +96,18 @@ export class ServerApi extends Api {
     sameSite: environment.isProduction ? 'strict' : 'lax',
     domain: environment.baseDomain,
     path: '/',
+  }
+
+  private getAccessToken() {
+    if (this.accessToken) return this.accessToken
+    if (!this.req.headers.cookie) return ''
+    const cookies = cookie.parse(this.req.headers.cookie)
+    return cookies[this.accessTokenCookie] || ''
+  }
+
+  private getRefreshToken() {
+    if (!this.req.headers.cookie) return ''
+    const cookies = cookie.parse(this.req.headers.cookie)
+    return cookies[this.refreshTokenCookie] || ''
   }
 }

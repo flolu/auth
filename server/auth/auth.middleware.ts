@@ -13,20 +13,28 @@ export class AuthMiddleware extends BaseMiddleware {
   }
 
   async handler(req: Request, res: Response, next: NextFunction) {
-    try {
-      const tokenString = req.cookies[Cookies.AccessToken]
-      const token = AccessToken.tryFromString(
-        tokenString,
+    let token: AccessToken | undefined
+
+    if (req.cookies[Cookies.AccessToken]) {
+      token = AccessToken.tryFromString(
+        req.cookies[Cookies.AccessToken],
         this.config.accessTokenSecret
       )
-      if (!token) {
-        res.status(401)
-        return next(new Error('Not Signed in'))
-      }
-      res.locals.token = token
-      next()
-    } catch (err) {
-      next(err)
     }
+
+    if (!token && req.headers.authorization) {
+      token = AccessToken.tryFromString(
+        req.headers.authorization.toString(),
+        this.config.accessTokenSecret
+      )
+    }
+
+    if (!token) {
+      res.status(401)
+      return next(new Error('Not Signed in'))
+    }
+
+    res.locals.token = token
+    next()
   }
 }

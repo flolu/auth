@@ -69,7 +69,23 @@ export class AuthController implements interfaces.Controller {
   }
 
   @httpPost('/refresh-ssr', InternalMiddleware)
-  async refreshTokensServerSide() {}
+  async refreshTokensServerSide(req: Request) {
+    const current = RefreshToken.fromString(
+      req.body.refreshToken,
+      this.config.refreshTokenSecret
+    )
+
+    const user = await this.userService.getById(current.userId)
+    if (!user) throw 'User not found'
+
+    const tokens = this.authService.refreshTokens(current, user.tokenVersion)
+    const accessToken = tokens.accessToken.sign(this.config.accessTokenSecret)
+    const refreshToken = tokens.refreshToken?.sign(
+      this.config.refreshTokenSecret
+    )
+
+    return {accessToken, refreshToken}
+  }
 
   @httpPost('/logout', AuthMiddleware)
   async logout() {}

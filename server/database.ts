@@ -21,7 +21,6 @@ export class Database {
   async init() {
     await this.waitForInitialized(true)
     this.isInitialized = true
-    console.log('connected to db')
   }
 
   async collection<T>(name: string) {

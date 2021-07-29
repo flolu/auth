@@ -5,12 +5,7 @@
   },
   "cSpell.words": ["MONGODB", "Parens", "inversify", "uuidv"],
 
-  "LineCount.excludes": [
-    "**/.vscode/**",
-    "**/node_modules/**",
-    "**/.next/**",
-    "**/**.lock"
-  ],
+  "LineCount.includes": ["**/*.ts", "**/*.tsx"],
 
   "workbench.colorCustomizations": {
     "activityBar.background": "#000307",
