@@ -33,6 +33,8 @@ export class AuthController implements interfaces.Controller {
     }
 
     const {accessToken, refreshToken} = this.authService.createTokens(user)
+    this.setTokens(res, accessToken, refreshToken)
+
     res.cookie(
       Cookies.AccessToken,
       accessToken.sign(this.config.accessTokenSecret),
@@ -51,7 +53,20 @@ export class AuthController implements interfaces.Controller {
   }
 
   @httpPost('/refresh')
-  async refreshTokens() {}
+  async refreshTokens(req: Request, res: Response) {
+    const cookieToken = req.cookies[Cookies.RefreshToken]
+    const current = RefreshToken.fromString(
+      cookieToken,
+      this.config.refreshTokenSecret
+    )
+
+    const user = await this.userService.getById(current.userId)
+    if (!user) throw 'User not found'
+
+    const tokens = await this.authService.refreshTokens(current, user)
+    const {accessToken, refreshToken} = tokens
+    this.setTokens(res, accessToken, refreshToken)
+  }
 
   @httpPost('/refresh-ssr', InternalMiddleware)
   async refreshTokensServerSide() {}
@@ -67,6 +82,31 @@ export class AuthController implements interfaces.Controller {
     secure: this.config.isProduction,
     sameSite: this.config.isProduction ? 'strict' : 'lax',
     domain: this.config.baseDomain,
-    path: '/',
+  }
+
+  private setTokens(
+    res: Response,
+    access: AccessToken,
+    refresh?: RefreshToken
+  ) {
+    res.cookie(
+      Cookies.AccessToken,
+      access.sign(this.config.accessTokenSecret),
+      {
+        ...this.cookieOptions,
+        maxAge: TokenExpiration.Access * 1000,
+      }
+    )
+
+    if (refresh) {
+      res.cookie(
+        Cookies.RefreshToken,
+        refresh.sign(this.config.refreshTokenSecret),
+        {
+          ...this.cookieOptions,
+          maxAge: TokenExpiration.Refresh * 1000,
+        }
+      )
+    }
   }
 }

@@ -16,7 +16,7 @@ export default function Me() {
 
   useEffect(() => {
     getMe()
-  })
+  }, [])
 
   return (
     <main>
