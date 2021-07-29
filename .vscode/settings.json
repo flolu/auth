@@ -3,5 +3,19 @@
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "cSpell.words": ["MONGODB", "inversify", "uuidv"]
+  "cSpell.words": ["MONGODB", "inversify", "uuidv"],
+
+  "LineCount.excludes": [
+    "**/.vscode/**",
+    "**/node_modules/**",
+    "**/.next/**",
+    "**/**.lock"
+  ],
+
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#000307",
+    "activityBar.foreground": "#fff",
+    "statusBar.background": "#020c1a",
+    "statusBar.foreground": "#fff"
+  }
 }

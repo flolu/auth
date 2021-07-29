@@ -19,7 +19,10 @@ export class AuthMiddleware extends BaseMiddleware {
         tokenString,
         this.config.accessTokenSecret
       )
-      if (!token) return next(new Error('Not Signed in'))
+      if (!token) {
+        res.status(401)
+        return next(new Error('Not Signed in'))
+      }
       res.locals.token = token
       next()
     } catch (err) {

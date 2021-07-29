@@ -1,26 +1,22 @@
-import axios from 'axios'
 import {useEffect, useState} from 'react'
 
+import {useApi} from '../contexts/api.context'
 import {environment} from '../lib/environment'
 
 export default function Me() {
-  const [user, setUser] = useState()
-  const [error, setError] = useState()
+  const api = useApi()
+  const [user, setUser] = useState<any>()
+  const [error, setError] = useState('')
 
   const getMe = async () => {
-    try {
-      const response = await axios.get(`${environment.apiUrl}/user/me`, {
-        withCredentials: true,
-      })
-      setUser(response.data)
-    } catch (err) {
-      setError(err)
-    }
+    const [error, user] = await api.get(`${environment.apiUrl}/user/me`)
+    if (error) setError(error)
+    else setUser(user)
   }
 
   useEffect(() => {
     getMe()
-  }, [])
+  })
 
   return (
     <main>

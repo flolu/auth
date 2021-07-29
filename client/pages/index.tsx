@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 import {environment} from '../lib/environment'
 
-const gitHubUrl = `https://github.com/login/oauth/authorize?client_id=${environment.gitHubClientId}&redirect_uri=${environment.gitHubRedirectUri}?path=${environment.gitHubPath}&scope=user:email`
+const gitHubUrl = `https://github.com/login/oauth/authorize?client_id=${environment.gitHubClientId}&redirect_uri=${environment.gitHubRedirectUri}?path=/me&scope=user:email`
 
 export default function Home() {
   return (
