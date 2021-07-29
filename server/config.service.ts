@@ -7,6 +7,7 @@ export class ConfigService {
   public readonly clientUrl = process.env.CLIENT_URL!
   public readonly baseDomain = process.env.BASE_DOMAIN!
 
+  public readonly internalSecret = process.env.INTERNAL_SECRET!
   public readonly accessTokenSecret = process.env.ACCESS_TOKEN_SECRET!
   public readonly refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET!
 

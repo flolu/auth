@@ -13,8 +13,8 @@ export class AuthService {
     return {accessToken, refreshToken}
   }
 
-  refreshTokens(current: RefreshToken, user: UserDocument) {
-    if (user.tokenVersion !== current.version) throw 'Token revoked'
+  refreshTokens(current: RefreshToken, tokenVersion: number) {
+    if (tokenVersion !== current.version) throw 'Token revoked'
     const accessToken = new AccessToken(current.userId)
 
     let refreshToken: RefreshToken | undefined

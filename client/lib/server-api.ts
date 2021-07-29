@@ -1,4 +1,3 @@
-import axios from 'axios'
 import cookie from 'cookie'
 import {IncomingMessage, ServerResponse} from 'http'
 
@@ -27,10 +26,10 @@ export class ServerApi extends Api {
 
     try {
       const payload = {refreshToken: currentRefreshToken}
-      // TODO send secret to verify that request comes from ssr client
       const [error, data] = await this.post<any>(
         `${environment.apiUrl}/auth/refresh-ssr`,
-        payload
+        payload,
+        {Authorization: environment.internalSecret}
       )
       if (error || !data) throw error
       const {accessToken, refreshToken} = data
@@ -88,7 +87,7 @@ export class ServerApi extends Api {
     httpOnly: true,
     secure: environment.isProduction,
     sameSite: environment.isProduction ? 'strict' : 'lax',
-    domain: process.env.BASE_DOMAIN,
+    domain: environment.baseDomain,
     path: '/',
   }
 }

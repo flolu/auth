@@ -63,7 +63,7 @@ export class AuthController implements interfaces.Controller {
     const user = await this.userService.getById(current.userId)
     if (!user) throw 'User not found'
 
-    const tokens = await this.authService.refreshTokens(current, user)
+    const tokens = this.authService.refreshTokens(current, user.tokenVersion)
     const {accessToken, refreshToken} = tokens
     this.setTokens(res, accessToken, refreshToken)
   }

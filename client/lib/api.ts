@@ -18,11 +18,12 @@ export abstract class Api {
 
   async post<T>(
     url: string,
-    payload: unknown = undefined
+    payload: unknown = undefined,
+    headers: any = {}
   ): Promise<PostResponse<T>> {
     try {
       const executeRequest = () =>
-        axios.post(url, payload, {withCredentials: true})
+        axios.post(url, payload, {withCredentials: true, headers})
       const response = await this.handleRequestWithRefresh(executeRequest)
       return [null, response.data]
     } catch (error) {
