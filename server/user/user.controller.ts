@@ -1,5 +1,5 @@
 import {Request} from 'express'
-import {controller, httpGet, httpPost, interfaces} from 'inversify-express-utils'
+import {controller, httpGet, interfaces} from 'inversify-express-utils'
 
 import {AuthMiddleware} from '../auth/auth.middleware'
 import {ResponseWithToken} from '../types'
@@ -14,7 +14,4 @@ export class UserController implements interfaces.Controller {
     const user = await this.userService.getById(res.locals.token.userId)
     return user
   }
-
-  @httpPost('/rename', AuthMiddleware)
-  async rename() {}
 }

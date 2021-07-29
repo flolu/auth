@@ -23,9 +23,7 @@ export class GitHubAdapter {
   async getUser(code: string): Promise<GitHubUser> {
     const token = await this.getAccessToken(code)
     const response = await axios.get<UserResponse>(this.userURL, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: {Authorization: `Bearer ${token}`},
     })
     return response.data as GitHubUser
   }
@@ -40,9 +38,7 @@ export class GitHubAdapter {
           client_secret: this.config.gitHubClientSecret,
           code,
         },
-        headers: {
-          Accept: 'application/json',
-        },
+        headers: {Accept: 'application/json'},
       }
     )
     return response.data.access_token

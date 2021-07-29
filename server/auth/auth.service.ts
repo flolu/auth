@@ -1,9 +1,10 @@
 import {injectable} from 'inversify'
 
+import {TokenExpiration} from '@shared'
+
 import {UserDocument} from '../user/user.schema'
 import {AccessToken} from './access-token'
 import {RefreshToken} from './refresh-token'
-import {TokenExpiration} from './token-expiration'
 
 @injectable()
 export class AuthService {

@@ -8,7 +8,6 @@ export abstract class Token<T> {
       return jwt.verify(token, secret) as unknown as T
     } catch (error) {
       if (error.message === 'jwt expired') throw 'Token expired'
-      if (error.message === 'invalid signature') throw 'Invalid token secret'
       throw 'Invalid token'
     }
   }

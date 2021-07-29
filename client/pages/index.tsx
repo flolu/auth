@@ -7,7 +7,7 @@ const gitHubUrl = `https://github.com/login/oauth/authorize?client_id=${environm
 export default function Home() {
   return (
     <main>
-      <h1>Hello world</h1>
+      <h1>Auth</h1>
       <Link href={gitHubUrl}>
         <a>Sign in with GitHub</a>
       </Link>

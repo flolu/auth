@@ -12,5 +12,29 @@
     "activityBar.foreground": "#fff",
     "statusBar.background": "#020c1a",
     "statusBar.foreground": "#fff"
-  }
+  },
+
+  "prettier.singleQuote": true,
+  "prettier.bracketSpacing": false,
+  "prettier.semi": false,
+  "prettier.arrowParens": "avoid",
+
+  "importSorter.generalConfiguration.sortOnBeforeSave": true,
+  "importSorter.importStringConfiguration.hasSemicolon": false,
+  "importSorter.importStringConfiguration.spacingPerImportExpression.afterStartingBracket": 0,
+  "importSorter.importStringConfiguration.spacingPerImportExpression.beforeEndingBracket": 0,
+  "importSorter.importStringConfiguration.maximumNumberOfImportExpressionsPerLine.type": "newLineEachExpressionAfterCountLimitExceptIfOnlyOne",
+  "importSorter.importStringConfiguration.tabSize": 2,
+  "importSorter.importStringConfiguration.trailingComma": "multiLine",
+  "importSorter.sortConfiguration.removeUnusedImports": true,
+  "importSorter.sortConfiguration.customOrderingRules.rules": [
+    {
+      "type": "importMember",
+      "regex": "^$",
+      "orderLevel": 10,
+      "disableSort": true
+    },
+    {"regex": "^(@shared)", "orderLevel": 30},
+    {"regex": "^[.]", "orderLevel": 50}
+  ]
 }

@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "commonjs",
+    "types": ["node", "reflect-metadata"],
+    "strict": true,
+    "alwaysStrict": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@shared": ["./shared"]
+    }
+  }
+}

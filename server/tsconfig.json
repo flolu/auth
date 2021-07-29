@@ -1,9 +1,4 @@
 {
-  "compilerOptions": {
-    "strict": true,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "target": "ES5"
-  }
+  "extends": "../tsconfig.json",
+  "references": [{"path": "../shared"}]
 }
