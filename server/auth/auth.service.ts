@@ -1,8 +1,7 @@
 import {injectable} from 'inversify'
 
-import {TokenExpiration} from '@shared'
+import {TokenExpiration, UserDocument} from '@shared'
 
-import {UserDocument} from '../user/user.schema'
 import {AccessToken} from './access-token'
 import {RefreshToken} from './refresh-token'
 

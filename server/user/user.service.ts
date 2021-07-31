@@ -1,8 +1,9 @@
 import {injectable, postConstruct} from 'inversify'
 
+import {UserDocument} from '@shared'
+
 import {Database} from '../database'
 import {Id} from '../id'
-import {UserDocument} from './user.schema'
 
 @injectable()
 export class UserService {

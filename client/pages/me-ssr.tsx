@@ -1,30 +1,43 @@
-import {GetServerSideProps} from 'next'
-import {FC} from 'react'
+import {Logout} from 'components/logout'
+import {useUser} from 'contexts/user.context'
+import {getSSRPropsWithFetcher} from 'lib/get-props'
+import Router from 'next/router'
+import {FC, useEffect} from 'react'
+
+import {UserDocument} from '@shared'
 
 import {environment} from '../lib/environment'
-import {ServerApi} from '../lib/server-api'
 
 interface Props {
   error: string | null
-  user: unknown
+  user: UserDocument | null
 }
 
-const MeSSR: FC<Props> = ({error, user}) => {
+const MeSSR: FC<Props> = props => {
+  if (props.error) Router.replace('/')
+  const userContext = useUser()
+  const user = userContext.user || props.user
+
+  useEffect(() => {
+    userContext.setUser(props.user!)
+  }, [])
+
   return (
     <main>
       <h1>Me SSR</h1>
-      {user && <pre>{JSON.stringify(user, null, 2)}</pre>}
-      {error && <pre>{JSON.stringify(error, null, 2)}</pre>}
+      {user && (
+        <div>
+          <pre>{JSON.stringify(user, null, 2)}</pre>
+          <Logout />
+        </div>
+      )}
     </main>
   )
 }
 
 export default MeSSR
 
-export const getServerSideProps: GetServerSideProps<Props> = async (
-  context
-) => {
-  const api = new ServerApi(context.req, context.res)
-  const [error, user] = await api.get(`${environment.apiUrl}/user/me`)
-  return {props: {error, user}}
-}
+export const getServerSideProps = getSSRPropsWithFetcher(async ({fetcher}) => {
+  const [error, user] = await fetcher<UserDocument>(`${environment.apiUrl}/user/me`)
+  return {props: {error, user}, redirect: error ? '/' : undefined}
+})

@@ -1,11 +1,15 @@
+import {UserProvider} from 'contexts/user.context'
+
+import {Navigation} from '../components/navigation'
+
 import type {AppProps} from 'next/app'
-import {ApiProvider} from '../contexts/api.context'
 
 function MyApp({Component, pageProps}: AppProps) {
   return (
-    <ApiProvider>
+    <UserProvider>
+      <Navigation />
       <Component {...pageProps} />
-    </ApiProvider>
+    </UserProvider>
   )
 }
 export default MyApp

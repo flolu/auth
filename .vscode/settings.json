@@ -18,6 +18,7 @@
   "prettier.bracketSpacing": false,
   "prettier.semi": false,
   "prettier.arrowParens": "avoid",
+  "prettier.printWidth": 100,
 
   "importSorter.generalConfiguration.sortOnBeforeSave": true,
   "importSorter.importStringConfiguration.hasSemicolon": false,

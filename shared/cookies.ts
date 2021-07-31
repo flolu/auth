@@ -1,4 +1,4 @@
-export const Cookies = {
-  AccessToken: 'access',
-  RefreshToken: 'refresh',
+export enum Cookies {
+  AccessToken = 'access',
+  RefreshToken = 'refresh',
 }
