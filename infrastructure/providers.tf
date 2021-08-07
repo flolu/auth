@@ -6,6 +6,10 @@ provider "kubernetes" {
   host                   = module.kubernetes.endpoint
   cluster_ca_certificate = module.kubernetes.cluster_ca_certificate
   token                  = module.kubernetes.token
+
+  experiments {
+    manifest_resource = true
+  }
 }
 
 provider "helm" {

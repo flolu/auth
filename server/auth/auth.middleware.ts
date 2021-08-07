@@ -2,11 +2,11 @@ import {NextFunction, Request} from 'express'
 import {injectable} from 'inversify'
 import {BaseMiddleware} from 'inversify-express-utils'
 import jwt from 'jsonwebtoken'
-import {ResponseWithToken} from 'server/types'
 
 import {AccessToken, Cookies} from '@shared'
 
 import {ConfigService} from '../config.service'
+import {ResponseWithToken} from '../types'
 
 @injectable()
 export class AuthMiddleware extends BaseMiddleware {

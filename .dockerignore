@@ -1,0 +1,5 @@
+./client
+./infrastructure
+./out
+**/node_modules
+**/.next

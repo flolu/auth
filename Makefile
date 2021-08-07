@@ -1,3 +1,10 @@
+GCP_PROJECT=flolu-auth-demo-test
+GKE_CLUSTER=cluster
+GKE_ZONE=europe-west3-a
+TF_BUCKET_URI=gs://flolu-auth-demo-test-terraform-state
+K8S_CONTEXT=gke_${GCP_PROJECT}_${GKE_ZONE}_${GKE_CLUSTER}
+IMAGE_REPO=eu.gcr.io/${GCP_PROJECT}
+
 # Development
 
 .PHONY: client
@@ -10,12 +17,14 @@ server:
 
 # Deployment
 
-GCP_PROJECT=flolu-auth-demo-test
-GKE_CLUSTER=cluster
-GKE_ZONE=europe-west3-a
-TF_BUCKET_URI=gs://flolu-auth-demo-test-terraform-state
-K8S_CONTEXT=gke_${GCP_PROJECT}_${GKE_ZONE}_${GKE_CLUSTER}
-IMAGE_REPO=eu.gcr.io/${GCP_PROJECT}
+api-image:
+	docker build -f server/Dockerfile -t ${IMAGE_REPO}/api:latest .
+	docker push ${IMAGE_REPO}/api:latest
+
+setup-kubectl:
+	gcloud container clusters get-credentials ${GKE_CLUSTER} --zone ${GKE_ZONE} --project ${GCP_PROJECT}
+
+# Infrastructure
 
 setup-kubectl:
 	gcloud container clusters get-credentials ${GKE_CLUSTER} --zone ${GKE_ZONE} --project ${GCP_PROJECT}

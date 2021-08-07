@@ -13,3 +13,7 @@ output "client_url" {
 output "realtime_service_url" {
   value = var.realtime_service_url
 }
+
+output "name" {
+  value = local.name
+}

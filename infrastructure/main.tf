@@ -61,3 +61,9 @@ module "configuration" {
 
   kubernetes_endpoint = module.kubernetes.endpoint
 }
+
+module "api" {
+  source             = "./modules/api-service"
+  container_regsitry = "eu.gcr.io/${var.google_cloud_project}"
+  config_name        = module.configuration.name
+}

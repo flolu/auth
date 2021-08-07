@@ -11,6 +11,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.0.1",
     "reflect-metadata": "^0.1.13",
+    "ts-node": "^10.1.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

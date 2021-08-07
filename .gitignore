@@ -1,3 +1,5 @@
+node_modules
 .env.development
 out/linecounter.**
 .terraform
+dist

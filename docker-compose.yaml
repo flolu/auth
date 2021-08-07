@@ -1,8 +1,8 @@
 version: '3'
 services:
-  auth-service:
+  api-service:
     image: node:14
-    container_name: auth_server
+    container_name: auth_api
     volumes:
       - ./server:/server
       - ./shared:/shared

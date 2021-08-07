@@ -3,6 +3,7 @@ locals {
   namespace = "cert-manager"
 }
 
+# TODO upgrade to 1.4.3
 resource "helm_release" "cert_manager" {
   name             = local.name
   repository       = "https://charts.jetstack.io"
@@ -16,5 +17,31 @@ resource "helm_release" "cert_manager" {
   set {
     name  = "installCRDs"
     value = true
+  }
+}
+
+resource "kubernetes_manifest" "cluster_issuer" {
+  manifest = {
+    apiVersion = "cert-manager.io/v1alpha2"
+    kind       = "ClusterIssuer"
+    metadata = {
+      name = "letsencrypt"
+    }
+    spec = {
+      acme = {
+        server = "https://acme-v02.api.letsencrypt.org/directory"
+        email  = "flo@drakery.com"
+        privateKeySecretRef = {
+          name = "letsencrypt-private-key"
+        }
+        solvers = [{
+          http01 = {
+            ingress = {
+              class = "nginx"
+            }
+          }
+        }]
+      }
+    }
   }
 }

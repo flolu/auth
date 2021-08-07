@@ -1,6 +1,10 @@
+locals {
+  name = "application-config"
+}
+
 resource "kubernetes_secret" "k8s_config" {
   metadata {
-    name = "application-config"
+    name = local.name
   }
 
   data = {

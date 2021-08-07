@@ -10,6 +10,7 @@ resource "kubernetes_namespace" "ingress_namespace" {
   }
 }
 
+# TODO upgrade to 3.35.0
 resource "helm_release" "nginx_ingress" {
   name            = local.name
   repository      = "https://kubernetes.github.io/ingress-nginx"
