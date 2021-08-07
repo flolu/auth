@@ -1,6 +1,4 @@
-import {TokenExpiration} from '@shared'
-
-import {Token} from './token'
+import {Token, TokenExpiration} from '@shared'
 
 interface RefreshTokenPayload {
   userId: string

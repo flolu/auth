@@ -2,10 +2,9 @@ import {NextFunction, Request, Response} from 'express'
 import {injectable} from 'inversify'
 import {BaseMiddleware} from 'inversify-express-utils'
 
-import {Cookies} from '@shared'
+import {AccessToken, Cookies} from '@shared'
 
 import {ConfigService} from '../config.service'
-import {AccessToken} from './access-token'
 
 @injectable()
 export class AuthMiddleware extends BaseMiddleware {

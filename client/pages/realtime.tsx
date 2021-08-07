@@ -1,27 +1,51 @@
-import {useUser} from 'contexts/user.context'
 import {environment} from 'lib/environment'
 import {withUser} from 'lib/get-props'
-import {FC, useEffect} from 'react'
+import {FC, useEffect, useRef, useState} from 'react'
 
 const Realtime: FC = () => {
-  const {user} = useUser()
+  const [value, setValue] = useState('')
+  const [messages, setMessages] = useState<any[]>([])
+  const ws = useRef<WebSocket>(null!)
 
   useEffect(() => {
-    const websocket = new WebSocket(environment.websocketUrl)
+    ws.current = new WebSocket(environment.websocketUrl)
+    ws.current.onopen = () => console.log('ws opened')
+    ws.current.onclose = () => console.log('ws closed')
 
-    websocket.onopen = () => {
-      websocket.send('Hi from client')
-    }
-
-    websocket.onmessage = message => {
-      console.log(message.data)
+    return () => {
+      ws.current.close()
     }
   }, [])
+
+  useEffect(() => {
+    ws.current.onmessage = msg => {
+      const parsed = JSON.parse(msg.data)
+      setMessages([...messages, parsed])
+    }
+  }, [messages])
+
+  const send = () => {
+    ws.current.send(value)
+    setValue('')
+  }
 
   return (
     <main>
       <h1>Realtime</h1>
-      {user && user.name}
+      <div>
+        {messages.map((msg, index) => {
+          return (
+            <div key={index}>
+              <p title={msg.userId}>{msg.text}</p>
+            </div>
+          )
+        })}
+      </div>
+      <input
+        value={value}
+        onChange={event => setValue(event.target.value)}
+        onKeyPress={event => event.key === 'Enter' && send()}
+      ></input>
     </main>
   )
 }

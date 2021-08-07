@@ -1,8 +1,7 @@
 import {injectable} from 'inversify'
 
-import {TokenExpiration, UserDocument} from '@shared'
+import {AccessToken, TokenExpiration, UserDocument} from '@shared'
 
-import {AccessToken} from './access-token'
 import {RefreshToken} from './refresh-token'
 
 @injectable()

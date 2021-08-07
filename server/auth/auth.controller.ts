@@ -1,12 +1,11 @@
 import {CookieOptions, Request, Response} from 'express'
 import {controller, httpGet, httpPost, interfaces} from 'inversify-express-utils'
 
-import {Cookies, TokenExpiration} from '@shared'
+import {AccessToken, Cookies, TokenExpiration} from '@shared'
 
 import {ConfigService} from '../config.service'
 import {ResponseWithToken} from '../types'
 import {UserService} from '../user/user.service'
-import {AccessToken} from './access-token'
 import {AuthMiddleware} from './auth.middleware'
 import {AuthService} from './auth.service'
 import {GitHubAdapter} from './github.adapter'
