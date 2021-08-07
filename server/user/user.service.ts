@@ -1,9 +1,9 @@
 import {injectable, postConstruct} from 'inversify'
+import {v4 as uuidv4} from 'uuid'
 
 import {UserDocument} from '@shared'
 
 import {Database} from '../database'
-import {Id} from '../id'
 
 @injectable()
 export class UserService {
@@ -36,7 +36,7 @@ export class UserService {
   async create(name: string, gitHubUserId: number): Promise<UserDocument> {
     const collection = await this.usersCollection()
     const user = {
-      id: Id.generate().toString(),
+      id: uuidv4(),
       name,
       tokenVersion: 0,
       gitHubUserId: gitHubUserId.toString(),
@@ -48,10 +48,7 @@ export class UserService {
 
   async increaseTokenVersion(userId: string) {
     const collection = await this.usersCollection()
-    const result = await collection.findOneAndUpdate(
-      {id: userId},
-      {$inc: {tokenVersion: 1}}
-    )
+    const result = await collection.findOneAndUpdate({id: userId}, {$inc: {tokenVersion: 1}})
     if (result.ok) return result.value
     throw new Error()
   }

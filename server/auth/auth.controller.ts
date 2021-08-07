@@ -39,15 +39,12 @@ export class AuthController implements interfaces.Controller {
     res.cookie(
       Cookies.AccessToken,
       accessToken.sign(this.config.accessTokenSecret),
-      {
-        ...this.cookieOptions,
-        maxAge: TokenExpiration.Access * 1000,
-      }
+      this.accessTokenCookieOptions
     )
     res.cookie(
       Cookies.RefreshToken,
       refreshToken.sign(this.config.refreshTokenSecret),
-      {...this.cookieOptions, maxAge: TokenExpiration.Refresh * 1000}
+      this.refreshTokenCookieOptions
     )
 
     res.redirect(`${this.config.clientUrl}${path}`)
@@ -56,10 +53,7 @@ export class AuthController implements interfaces.Controller {
   @httpPost('/refresh')
   async refreshTokens(req: Request, res: Response) {
     const cookieToken = req.cookies[Cookies.RefreshToken]
-    const current = RefreshToken.fromString(
-      cookieToken,
-      this.config.refreshTokenSecret
-    )
+    const current = RefreshToken.fromString(cookieToken, this.config.refreshTokenSecret)
 
     const user = await this.userService.getById(current.userId)
     if (!user) throw 'User not found'
@@ -71,19 +65,14 @@ export class AuthController implements interfaces.Controller {
 
   @httpPost('/refresh-ssr', InternalMiddleware)
   async refreshTokensServerSide(req: Request) {
-    const current = RefreshToken.fromString(
-      req.body.refreshToken,
-      this.config.refreshTokenSecret
-    )
+    const current = RefreshToken.fromString(req.body.refreshToken, this.config.refreshTokenSecret)
 
     const user = await this.userService.getById(current.userId)
     if (!user) throw 'User not found'
 
     const tokens = this.authService.refreshTokens(current, user.tokenVersion)
     const accessToken = tokens.accessToken.sign(this.config.accessTokenSecret)
-    const refreshToken = tokens.refreshToken?.sign(
-      this.config.refreshTokenSecret
-    )
+    const refreshToken = tokens.refreshToken?.sign(this.config.refreshTokenSecret)
 
     return {accessToken, refreshToken}
   }
@@ -99,40 +88,40 @@ export class AuthController implements interfaces.Controller {
     this.clearTokens(res as unknown as Response)
   }
 
-  private readonly cookieOptions: CookieOptions = {
+  readonly cookieOptions: CookieOptions = {
     httpOnly: true,
     secure: this.config.isProduction,
     sameSite: this.config.isProduction ? 'strict' : 'lax',
     domain: this.config.baseDomain,
   }
 
-  private setTokens(
-    res: Response,
-    access: AccessToken,
-    refresh?: RefreshToken
-  ) {
+  readonly refreshTokenCookieOptions: CookieOptions = {
+    ...this.cookieOptions,
+    maxAge: TokenExpiration.Refresh * 1000,
+  }
+
+  readonly accessTokenCookieOptions: CookieOptions = {
+    ...this.cookieOptions,
+    maxAge: TokenExpiration.Access * 1000,
+  }
+
+  setTokens(res: Response, access: AccessToken, refresh?: RefreshToken) {
     res.cookie(
       Cookies.AccessToken,
       access.sign(this.config.accessTokenSecret),
-      {
-        ...this.cookieOptions,
-        maxAge: TokenExpiration.Access * 1000,
-      }
+      this.accessTokenCookieOptions
     )
 
     if (refresh) {
       res.cookie(
         Cookies.RefreshToken,
         refresh.sign(this.config.refreshTokenSecret),
-        {
-          ...this.cookieOptions,
-          maxAge: TokenExpiration.Refresh * 1000,
-        }
+        this.refreshTokenCookieOptions
       )
     }
   }
 
-  private clearTokens(res: Response) {
+  clearTokens(res: Response) {
     res.cookie(Cookies.AccessToken, '', {maxAge: 0})
     res.cookie(Cookies.RefreshToken, '', {maxAge: 0})
   }

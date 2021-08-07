@@ -1,16 +1,12 @@
-import axios, {AxiosError, AxiosResponse} from 'axios'
+import axios, {AxiosResponse} from 'axios'
 import cookie from 'cookie'
 import {IncomingMessage, ServerResponse} from 'http'
 
 import {Cookies, TokenExpiration} from '@shared'
 
 import {environment} from './environment'
+import {getError} from './errors'
 import {QueryResponse} from './fetcher'
-
-const getError = (error: AxiosError) => {
-  if (error.isAxiosError && error.response) return error.response.data
-  return 'Unexpected error'
-}
 
 const getRefreshToken = (req: IncomingMessage) => {
   if (!req.headers.cookie) return ''
@@ -26,21 +22,33 @@ const cookieOptions: cookie.CookieSerializeOptions = {
   path: '/',
 }
 
+const accessTokenCookieOptions: cookie.CookieSerializeOptions = {
+  ...cookieOptions,
+  maxAge: TokenExpiration.Access,
+}
+
+const refreshTokenCookieOptions: cookie.CookieSerializeOptions = {
+  ...cookieOptions,
+  maxAge: TokenExpiration.Refresh,
+}
+
 const setCookies = (res: ServerResponse, accessToken: string, refreshToken?: string) => {
-  let refreshTokenCookie: string | undefined
+  let refreshTokenCookie = ''
   if (refreshToken) {
-    refreshTokenCookie = cookie.serialize(Cookies.RefreshToken, refreshToken, {
-      ...cookieOptions,
-      maxAge: TokenExpiration.Refresh,
-    })
+    refreshTokenCookie = cookie.serialize(
+      Cookies.RefreshToken,
+      refreshToken,
+      refreshTokenCookieOptions
+    )
   }
-  const accessTokenCookie = cookie.serialize(Cookies.AccessToken, accessToken, {
-    ...cookieOptions,
-    maxAge: TokenExpiration.Access,
-  })
+  const accessTokenCookie = cookie.serialize(
+    Cookies.AccessToken,
+    accessToken,
+    accessTokenCookieOptions
+  )
 
   if (refreshToken) {
-    res.setHeader('Set-Cookie', `${refreshTokenCookie}; ${accessTokenCookie};`)
+    res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie])
   } else {
     res.setHeader('Set-Cookie', accessTokenCookie)
   }
@@ -49,7 +57,7 @@ const setCookies = (res: ServerResponse, accessToken: string, refreshToken?: str
 const clearCookies = (res: ServerResponse) => {
   const refresh = cookie.serialize(Cookies.RefreshToken, '', {maxAge: 0})
   const access = cookie.serialize(Cookies.AccessToken, '', {maxAge: 0})
-  res.setHeader('Set-Cookie', `${refresh}; ${access};`)
+  res.setHeader('Set-Cookie', [refresh, access])
 }
 
 const refreshTokens = async (req: IncomingMessage, res: ServerResponse) => {
@@ -80,7 +88,7 @@ const refreshTokens = async (req: IncomingMessage, res: ServerResponse) => {
 const getAccessToken = (req: IncomingMessage) => {
   if (!req.headers.cookie) return undefined
   const cookies = cookie.parse(req.headers.cookie)
-  return cookies[Cookies.RefreshToken] || undefined
+  return cookies[Cookies.AccessToken] || undefined
 }
 
 const handleRequest = async (

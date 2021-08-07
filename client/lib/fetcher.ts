@@ -1,13 +1,9 @@
-import axios, {AxiosError, AxiosResponse} from 'axios'
+import axios, {AxiosResponse} from 'axios'
 
 import {environment} from './environment'
+import {getError} from './errors'
 
 export type QueryResponse<T> = [error: string | null, data: T | null]
-
-const getError = (error: AxiosError) => {
-  if (error.isAxiosError && error.response) return error.response.data
-  return 'Unexpected error'
-}
 
 const refreshTokens = async () => {
   await axios.post(`${environment.apiUrl}/auth/refresh`, undefined, {
@@ -43,7 +39,7 @@ export const fetcher = async <T>(url: string): Promise<QueryResponse<T>> => {
   }
 }
 
-export const poster = async <T>(url: string, payload?: any): Promise<QueryResponse<T>> => {
+export const poster = async <T>(url: string, payload?: unknown): Promise<QueryResponse<T>> => {
   try {
     const data = await handleRequest<T>(() => axios.post<T>(url, payload, {withCredentials: true}))
     return [null, data]
