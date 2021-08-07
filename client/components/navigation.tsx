@@ -19,6 +19,10 @@ export const Navigation: FC = () => {
           <Link href="/me-ssr">
             <a>Me SSR</a>
           </Link>
+          <br></br>
+          <Link href="/realtime">
+            <a>Realtime</a>
+          </Link>
         </>
       )}
       {!user && (

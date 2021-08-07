@@ -1,18 +1,9 @@
 import {Logout} from 'components/logout'
 import {useUser} from 'contexts/user.context'
 import {withUser} from 'lib/get-props'
-import Router from 'next/router'
 import {FC} from 'react'
 
-import {UserDocument} from '@shared'
-
-interface Props {
-  error: string | null
-  user: UserDocument | null
-}
-
-const MeSSR: FC<Props> = props => {
-  if (props.error) Router.replace('/')
+const MeSSR: FC = () => {
   const {user} = useUser()
 
   return (

@@ -1,7 +1,7 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "types": ["node", "reflect-metadata"]
+    "types": ["node"]
   },
   "references": [{"path": "../shared"}]
 }

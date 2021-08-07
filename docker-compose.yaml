@@ -2,7 +2,7 @@ version: '3'
 services:
   auth-service:
     image: node:14
-    container_name: ssr-auth_server
+    container_name: auth_server
     volumes:
       - ./server:/server
       - ./shared:/shared
@@ -13,9 +13,22 @@ services:
     command: yarn run ts-node-dev --project tsconfig.json -r tsconfig-paths/register index.ts
     env_file: .env.development
 
+  realtime-service:
+    image: node:14
+    container_name: auth_realtime
+    volumes:
+      - ./realtime:/realtime
+      - ./shared:/shared
+      - ./tsconfig.json:/tsconfig.json
+    ports:
+      - '3002:3000'
+    working_dir: /realtime
+    command: yarn run ts-node-dev --project tsconfig.json -r tsconfig-paths/register index.ts
+    env_file: .env.development
+
   mongodb:
     image: mongo:5
-    container_name: ssr-auth_mongodb
+    container_name: auth_mongodb
     ports:
       - '27017:27017'
     environment:
