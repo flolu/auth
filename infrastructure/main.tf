@@ -62,8 +62,18 @@ module "configuration" {
   kubernetes_endpoint = module.kubernetes.endpoint
 }
 
+locals {
+  container_registry = "eu.gcr.io/${var.google_cloud_project}"
+}
+
 module "api" {
   source             = "./modules/api-service"
-  container_regsitry = "eu.gcr.io/${var.google_cloud_project}"
+  container_regsitry = local.container_registry
+  config_name        = module.configuration.name
+}
+
+module "realtime" {
+  source             = "./modules/realtime-service"
+  container_regsitry = local.container_registry
   config_name        = module.configuration.name
 }

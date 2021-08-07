@@ -21,6 +21,10 @@ api-image:
 	docker build -f server/Dockerfile -t ${IMAGE_REPO}/api:latest .
 	docker push ${IMAGE_REPO}/api:latest
 
+realtime-image:
+	docker build -f realtime/Dockerfile -t ${IMAGE_REPO}/realtime:latest .
+	docker push ${IMAGE_REPO}/realtime:latest
+
 setup-kubectl:
 	gcloud container clusters get-credentials ${GKE_CLUSTER} --zone ${GKE_ZONE} --project ${GCP_PROJECT}
 

@@ -4,26 +4,30 @@ services:
     image: node:14
     container_name: auth_api
     volumes:
+      - ./node_modules:/node_modules
       - ./server:/server
       - ./shared:/shared
       - ./tsconfig.json:/tsconfig.json
+      - ./package.json:/package.json
     ports:
       - '3001:3000'
-    working_dir: /server
-    command: yarn run ts-node-dev --project tsconfig.json -r tsconfig-paths/register index.ts
+    working_dir: /
+    command: yarn run ts-node-dev --project server/tsconfig.json -r tsconfig-paths/register server/index.ts
     env_file: .env.development
 
   realtime-service:
     image: node:14
     container_name: auth_realtime
     volumes:
+      - ./node_modules:/node_modules
       - ./realtime:/realtime
       - ./shared:/shared
       - ./tsconfig.json:/tsconfig.json
+      - ./package.json:/package.json
     ports:
       - '3002:3000'
-    working_dir: /realtime
-    command: yarn run ts-node-dev --project tsconfig.json -r tsconfig-paths/register index.ts
+    working_dir: /
+    command: yarn run ts-node-dev --project realtime/tsconfig.json -r tsconfig-paths/register realtime/index.ts
     env_file: .env.development
 
   mongodb:

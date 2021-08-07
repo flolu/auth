@@ -5,7 +5,12 @@ import * as WebSocket from 'ws'
 import {authorizeClient, refreshAccessTokenLoop} from './authentication'
 import {AugmentedSocket} from './types'
 
-const server = createServer()
+const server = createServer((_req, res) => {
+  res.statusCode = 200
+  res.write('Realtime')
+  res.end()
+})
+
 const wss = new WebSocket.Server({noServer: true})
 
 server.on('upgrade', (request: IncomingMessage, socket: Socket, head: Buffer) => {
