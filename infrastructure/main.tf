@@ -5,6 +5,12 @@ terraform {
   }
 }
 
+locals {
+  environment  = "prod"
+  api_url      = "https://api.${var.domain}"
+  realtime_url = "wss://realtime.${var.domain}"
+}
+
 module "kubernetes" {
   source       = "./modules/google-kubernetes-engine"
   project      = var.google_cloud_project
@@ -40,12 +46,12 @@ module "mongodb" {
 module "configuration" {
   source = "./modules/kubernetes-configuration"
 
-  environment = "prod"
+  environment = local.environment
 
   base_domain          = var.domain
   client_url           = "https://${var.domain}"
-  api_url              = "https://api.${var.domain}"
-  realtime_service_url = "wss://realtime.${var.domain}"
+  api_url              = local.api_url
+  realtime_service_url = local.realtime_url
 
   mongodb_database = module.mongodb.database
   mongodb_url      = module.mongodb.url
@@ -76,4 +82,16 @@ module "realtime" {
   source             = "./modules/realtime-service"
   container_regsitry = local.container_registry
   config_name        = module.configuration.name
+}
+
+module "client" {
+  source              = "./modules/client"
+  container_regsitry  = local.container_registry
+  environment         = local.environment
+  api_url             = local.api_url
+  github_client_id    = var.github_client_id
+  github_redirect_url = "${local.api_url}/auth/github"
+  realtime_url        = local.realtime_url
+  domain              = var.domain
+  internal_secret     = var.internal_secret
 }

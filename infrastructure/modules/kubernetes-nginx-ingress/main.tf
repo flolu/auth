@@ -69,7 +69,7 @@ resource "kubernetes_ingress" "ingress" {
         path {
           backend {
             service_name = "client"
-            service_port = 8080
+            service_port = 3000
           }
         }
       }

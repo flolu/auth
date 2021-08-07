@@ -1,6 +1,27 @@
-resource "kubernetes_deployment" "api" {
+locals {
+  config_name = "client-config"
+}
+
+resource "kubernetes_secret" "k8s_config" {
   metadata {
-    name = "api"
+    name = local.config_name
+  }
+
+  data = {
+    NEXT_PUBLIC_ENVIRONMENT         = var.environment
+    NEXT_PUBLIC_API_URL             = var.api_url
+    NEXT_PUBLIC_GITHUB_CLIENT_ID    = var.github_client_id
+    NEXT_PUBLIC_GITHUB_REDIRECT_URL = var.github_redirect_url
+    NEXT_PUBLIC_WEBSOCKET_URL       = var.realtime_url
+    BASE_DOMAIN                     = var.domain
+    INTERNAL_SECRET                 = var.internal_secret
+  }
+}
+
+
+resource "kubernetes_deployment" "client" {
+  metadata {
+    name = "client"
   }
 
   spec {
@@ -8,25 +29,25 @@ resource "kubernetes_deployment" "api" {
 
     selector {
       match_labels = {
-        app = "api"
+        app = "client"
       }
     }
 
     template {
       metadata {
         labels = {
-          "app" = "api"
+          "app" = "client"
         }
       }
 
       spec {
         container {
-          name  = "api"
-          image = "${var.container_regsitry}/api:latest"
+          name  = "client"
+          image = "${var.container_regsitry}/client:latest"
 
           env_from {
             secret_ref {
-              name = var.config_name
+              name = local.config_name
             }
           }
 
@@ -60,16 +81,16 @@ resource "kubernetes_deployment" "api" {
   }
 }
 
-resource "kubernetes_service" "api" {
+resource "kubernetes_service" "client" {
   metadata {
-    name = "api"
+    name = "client"
   }
 
   spec {
     type = "NodePort"
 
     selector = {
-      app = "api"
+      app = "client"
     }
 
     port {
@@ -80,9 +101,9 @@ resource "kubernetes_service" "api" {
   }
 }
 
-resource "kubernetes_horizontal_pod_autoscaler" "api" {
+resource "kubernetes_horizontal_pod_autoscaler" "client" {
   metadata {
-    name = "api"
+    name = "client"
   }
 
   spec {
@@ -91,7 +112,7 @@ resource "kubernetes_horizontal_pod_autoscaler" "api" {
 
     scale_target_ref {
       kind = "Deployment"
-      name = "api-service"
+      name = "client-service"
     }
   }
 }

@@ -52,7 +52,7 @@ resource "kubernetes_deployment" "realtime" {
               memory = "512Mi"
             }
             requests = {
-              cpu    = "250m"
+              cpu    = "50m"
               memory = "50Mi"
             }
           }

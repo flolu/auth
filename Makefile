@@ -17,6 +17,10 @@ server:
 
 # Deployment
 
+client-image:
+	docker build -f client/Dockerfile -t ${IMAGE_REPO}/client:latest .
+	docker push ${IMAGE_REPO}/client:latest
+
 api-image:
 	docker build -f server/Dockerfile -t ${IMAGE_REPO}/api:latest .
 	docker push ${IMAGE_REPO}/api:latest
@@ -29,9 +33,6 @@ setup-kubectl:
 	gcloud container clusters get-credentials ${GKE_CLUSTER} --zone ${GKE_ZONE} --project ${GCP_PROJECT}
 
 # Infrastructure
-
-setup-kubectl:
-	gcloud container clusters get-credentials ${GKE_CLUSTER} --zone ${GKE_ZONE} --project ${GCP_PROJECT}
 
 setup-infrastructure: create-terraform-bucket init-infrastructure create-terraform-workspaces
 
