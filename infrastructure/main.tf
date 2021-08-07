@@ -1,0 +1,63 @@
+terraform {
+  backend "gcs" {
+    bucket = "flolu-auth-demo-test-terraform-state"
+    prefix = "prod"
+  }
+}
+
+module "kubernetes" {
+  source       = "./modules/google-kubernetes-engine"
+  project      = var.google_cloud_project
+  region       = "europe-west3-a"
+  machine_type = "e2-small"
+}
+
+module "cert_manager" {
+  source              = "./modules/kubernetes-cert-manager"
+  kubernetes_endpoint = module.kubernetes.endpoint
+}
+
+module "ingress" {
+  source              = "./modules/kubernetes-nginx-ingress"
+  domain              = var.domain
+  kubernetes_endpoint = module.kubernetes.endpoint
+}
+
+module "dns" {
+  source = "./modules/domain-name-system"
+  ip     = module.ingress.ip
+  domain = var.domain
+}
+
+module "mongodb" {
+  source                   = "./modules/mongodb-atlas"
+  atlas_project_id         = var.atlas_project_id
+  mongodbatlas_public_key  = var.mongodbatlas_public_key
+  mongodbatlas_private_key = var.mongodbatlas_private_key
+  ip                       = module.ingress.ip
+}
+
+module "configuration" {
+  source = "./modules/kubernetes-configuration"
+
+  environment = "prod"
+
+  base_domain          = var.domain
+  client_url           = "https://${var.domain}"
+  api_url              = "https://api.${var.domain}"
+  realtime_service_url = "wss://realtime.${var.domain}"
+
+  mongodb_database = module.mongodb.database
+  mongodb_url      = module.mongodb.url
+  mongodb_user     = module.mongodb.user
+  mongodb_password = module.mongodb.password
+
+  internal_secret      = var.internal_secret
+  refresh_token_secret = var.refresh_token_secret
+  access_token_secret  = var.access_token_secret
+
+  github_client_id     = var.github_client_id
+  github_client_secret = var.github_client_secret
+
+  kubernetes_endpoint = module.kubernetes.endpoint
+}
