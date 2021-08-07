@@ -96,7 +96,7 @@ export class AuthController implements interfaces.Controller {
   @httpPost('/logout-all', AuthMiddleware)
   async logoutAll(_req: Request, res: ResponseWithToken) {
     await this.userService.increaseTokenVersion(res.locals.token.userId)
-    this.clearTokens(res as unknown as Response)
+    this.clearTokens(res)
   }
 
   readonly cookieOptions: CookieOptions = {

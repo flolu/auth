@@ -9,8 +9,6 @@ const Realtime: FC = () => {
 
   useEffect(() => {
     ws.current = new WebSocket(environment.websocketUrl)
-    ws.current.onopen = () => console.log('ws opened')
-    ws.current.onclose = () => console.log('ws closed')
 
     return () => {
       ws.current.close()

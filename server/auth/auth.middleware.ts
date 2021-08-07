@@ -1,4 +1,4 @@
-import {NextFunction, Request, Response} from 'express'
+import {NextFunction, Request} from 'express'
 import {injectable} from 'inversify'
 import {BaseMiddleware} from 'inversify-express-utils'
 import jwt from 'jsonwebtoken'
@@ -14,7 +14,7 @@ export class AuthMiddleware extends BaseMiddleware {
     super()
   }
 
-  async handler(req: Request, res: Response, next: NextFunction) {
+  async handler(req: Request, res: ResponseWithToken, next: NextFunction) {
     let token: AccessToken | undefined
 
     token = this.tryFromString(req.cookies[Cookies.AccessToken])
@@ -25,7 +25,7 @@ export class AuthMiddleware extends BaseMiddleware {
       return next(new Error('Not Signed in'))
     }
 
-    ;(res as unknown as ResponseWithToken).locals.token = token
+    res.locals.token = token
     next()
   }
 
