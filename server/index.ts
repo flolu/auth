@@ -34,7 +34,7 @@ server.setConfig(app => {
 
 server.setErrorConfig(app => {
   app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-    if (!res.statusCode) {
+    if (err && res.statusCode === 200) {
       console.error(err)
       res.status(500)
     }

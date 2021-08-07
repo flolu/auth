@@ -2,7 +2,7 @@ import axios, {AxiosResponse} from 'axios'
 import cookie from 'cookie'
 import {IncomingMessage, ServerResponse} from 'http'
 
-import {Cookies, TokenExpiration} from '@shared'
+import {Cookies, RefreshTokensServer, TokenExpiration} from '@shared'
 
 import {environment} from './environment'
 import {getError} from './errors'
@@ -47,11 +47,10 @@ const setCookies = (res: ServerResponse, accessToken: string, refreshToken?: str
     accessTokenCookieOptions
   )
 
-  if (refreshToken) {
-    res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie])
-  } else {
-    res.setHeader('Set-Cookie', accessTokenCookie)
-  }
+  res.setHeader(
+    'Set-Cookie',
+    refreshTokenCookie ? [accessTokenCookie, refreshTokenCookie] : accessTokenCookie
+  )
 }
 
 const clearCookies = (res: ServerResponse) => {
@@ -66,7 +65,7 @@ const refreshTokens = async (req: IncomingMessage, res: ServerResponse) => {
 
   try {
     const payload = {refreshToken: currentRefreshToken}
-    const response = await axios.post<{accessToken: string; refreshToken?: string}>(
+    const response = await axios.post<RefreshTokensServer>(
       `${environment.apiUrl}/auth/refresh-ssr`,
       payload,
       {

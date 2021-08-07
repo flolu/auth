@@ -1,7 +1,15 @@
 import {CookieOptions, Request, Response} from 'express'
 import {controller, httpGet, httpPost, interfaces} from 'inversify-express-utils'
+import jwt from 'jsonwebtoken'
 
-import {AccessToken, Cookies, TokenExpiration} from '@shared'
+import {
+  AccessToken,
+  AccessTokenPayload,
+  Cookies,
+  RefreshToken,
+  RefreshTokenPayload,
+  TokenExpiration,
+} from '@shared'
 
 import {ConfigService} from '../config.service'
 import {ResponseWithToken} from '../types'
@@ -10,7 +18,6 @@ import {AuthMiddleware} from './auth.middleware'
 import {AuthService} from './auth.service'
 import {GitHubAdapter} from './github.adapter'
 import {InternalMiddleware} from './internal.middleware'
-import {RefreshToken} from './refresh-token'
 
 @controller('/auth')
 export class AuthController implements interfaces.Controller {
@@ -37,12 +44,12 @@ export class AuthController implements interfaces.Controller {
 
     res.cookie(
       Cookies.AccessToken,
-      accessToken.sign(this.config.accessTokenSecret),
+      this.signAccessToken(accessToken),
       this.accessTokenCookieOptions
     )
     res.cookie(
       Cookies.RefreshToken,
-      refreshToken.sign(this.config.refreshTokenSecret),
+      this.signRefreshToken(refreshToken),
       this.refreshTokenCookieOptions
     )
 
@@ -51,8 +58,10 @@ export class AuthController implements interfaces.Controller {
 
   @httpPost('/refresh')
   async refreshTokens(req: Request, res: Response) {
-    const cookieToken = req.cookies[Cookies.RefreshToken]
-    const current = RefreshToken.fromString(cookieToken, this.config.refreshTokenSecret)
+    const current = jwt.verify(
+      req.cookies[Cookies.RefreshToken],
+      this.config.refreshTokenSecret
+    ) as RefreshToken
 
     const user = await this.userService.getById(current.userId)
     if (!user) throw 'User not found'
@@ -64,14 +73,17 @@ export class AuthController implements interfaces.Controller {
 
   @httpPost('/refresh-ssr', InternalMiddleware)
   async refreshTokensServerSide(req: Request) {
-    const current = RefreshToken.fromString(req.body.refreshToken, this.config.refreshTokenSecret)
+    const current = jwt.verify(
+      req.body.refreshToken,
+      this.config.refreshTokenSecret
+    ) as RefreshToken
 
     const user = await this.userService.getById(current.userId)
     if (!user) throw 'User not found'
 
     const tokens = this.authService.refreshTokens(current, user.tokenVersion)
-    const accessToken = tokens.accessToken.sign(this.config.accessTokenSecret)
-    const refreshToken = tokens.refreshToken?.sign(this.config.refreshTokenSecret)
+    const accessToken = this.signAccessToken(tokens.accessToken)
+    const refreshToken = tokens.refreshToken && this.signRefreshToken(tokens.refreshToken)
 
     return {accessToken, refreshToken}
   }
@@ -104,17 +116,13 @@ export class AuthController implements interfaces.Controller {
     maxAge: TokenExpiration.Access * 1000,
   }
 
-  setTokens(res: Response, access: AccessToken, refresh?: RefreshToken) {
-    res.cookie(
-      Cookies.AccessToken,
-      access.sign(this.config.accessTokenSecret),
-      this.accessTokenCookieOptions
-    )
+  setTokens(res: Response, access: AccessTokenPayload, refresh?: RefreshTokenPayload) {
+    res.cookie(Cookies.AccessToken, this.signAccessToken(access), this.accessTokenCookieOptions)
 
     if (refresh) {
       res.cookie(
         Cookies.RefreshToken,
-        refresh.sign(this.config.refreshTokenSecret),
+        this.signRefreshToken(refresh),
         this.refreshTokenCookieOptions
       )
     }
@@ -123,5 +131,13 @@ export class AuthController implements interfaces.Controller {
   clearTokens(res: Response) {
     res.cookie(Cookies.AccessToken, '', {maxAge: 0})
     res.cookie(Cookies.RefreshToken, '', {maxAge: 0})
+  }
+
+  signAccessToken(payload: AccessTokenPayload) {
+    return jwt.sign(payload, this.config.accessTokenSecret, {expiresIn: TokenExpiration.Access})
+  }
+
+  signRefreshToken(payload: RefreshTokenPayload) {
+    return jwt.sign(payload, this.config.refreshTokenSecret, {expiresIn: TokenExpiration.Refresh})
   }
 }
