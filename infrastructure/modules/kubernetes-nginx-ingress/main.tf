@@ -10,15 +10,15 @@ resource "kubernetes_namespace" "ingress_namespace" {
   }
 }
 
-# TODO upgrade to 3.35.0
 resource "helm_release" "nginx_ingress" {
   name            = local.name
   repository      = "https://kubernetes.github.io/ingress-nginx"
   chart           = local.chart
-  version         = "3.24.0"
+  version         = "3.35.0"
   force_update    = true
   cleanup_on_fail = true
   namespace       = local.namespace
+  wait            = true
 
   set {
     name  = "controller.service.externalTrafficPolicy"
@@ -103,6 +103,3 @@ resource "kubernetes_ingress" "ingress" {
   depends_on = [helm_release.nginx_ingress]
 }
 
-output "ip" {
-  value = kubernetes_ingress.ingress.status.0.load_balancer.0.ingress.0.ip
-}

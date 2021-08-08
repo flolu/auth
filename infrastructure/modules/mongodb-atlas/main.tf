@@ -12,9 +12,6 @@ resource "mongodbatlas_cluster" "cluster" {
   provider_region_name         = "EU_CENTRAL_1"
   provider_instance_size_name  = "M2"
   auto_scaling_disk_gb_enabled = false
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "random_password" "password" {

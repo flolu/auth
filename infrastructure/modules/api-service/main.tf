@@ -21,8 +21,9 @@ resource "kubernetes_deployment" "api" {
 
       spec {
         container {
-          name  = "api"
-          image = "${var.container_regsitry}/api:latest"
+          name              = "api"
+          image             = "${var.container_regsitry}/api:latest"
+          image_pull_policy = "Always"
 
           env_from {
             secret_ref {

@@ -16,6 +16,7 @@ RUN yarn next build
 FROM node:alpine AS runner
 WORKDIR /app
 ENV NODE_ENV production
+COPY --from=builder /app/client/.env.production ./client/.env.production
 COPY --from=builder /app/client/next.config.js ./client/
 COPY --from=builder /app/client/public ./client/public
 COPY --from=builder /app/client/.next ./client/.next

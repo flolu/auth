@@ -31,13 +31,12 @@ export class GitHubAdapter {
   private async getAccessToken(code: string) {
     const response = await axios.post<AccessTokenResponse>(
       this.tokenURL,
-      undefined,
       {
-        params: {
-          client_id: this.config.gitHubClientId,
-          client_secret: this.config.gitHubClientSecret,
-          code,
-        },
+        client_id: this.config.gitHubClientId,
+        client_secret: this.config.gitHubClientSecret,
+        code,
+      },
+      {
         headers: {Accept: 'application/json'},
       }
     )

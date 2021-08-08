@@ -3,12 +3,11 @@ locals {
   namespace = "cert-manager"
 }
 
-# TODO upgrade to 1.4.3
 resource "helm_release" "cert_manager" {
   name             = local.name
   repository       = "https://charts.jetstack.io"
   chart            = "cert-manager"
-  version          = "1.2.0"
+  version          = "1.4.3"
   force_update     = true
   cleanup_on_fail  = true
   namespace        = local.namespace
@@ -20,9 +19,10 @@ resource "helm_release" "cert_manager" {
   }
 }
 
+# Uncomment the first time you run terraform apply
 resource "kubernetes_manifest" "cluster_issuer" {
   manifest = {
-    apiVersion = "cert-manager.io/v1alpha2"
+    apiVersion = "cert-manager.io/v1"
     kind       = "ClusterIssuer"
     metadata = {
       name = "letsencrypt"
@@ -44,4 +44,6 @@ resource "kubernetes_manifest" "cluster_issuer" {
       }
     }
   }
+
+  depends_on = [helm_release.cert_manager]
 }
