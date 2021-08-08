@@ -32,8 +32,3 @@ resource "mongodbatlas_database_user" "user" {
   }
 }
 
-resource "mongodbatlas_project_ip_access_list" "test" {
-  project_id = var.atlas_project_id
-  ip_address = var.ip
-  comment    = "Kubernetes cluster"
-}

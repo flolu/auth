@@ -62,10 +62,11 @@ Coming soon
 **Step by step guide**
 
 1. Create a [Google Cloud project](https://console.cloud.google.com)
-2. Insert the project id into [`Makefile`](Makefile) (`GCP_PROJECT=<your_project_id>`)
-3. Set `TF_BUCKET_URI` in [`Makefile`](Makefile) to a unique Google Cloud Storage bucket name
-4. Create the bucket for storing Terraform state (`make create-terraform-bucket`)
-5. Insert secrets into Google Cloud Secret Manager
+2. Sign into your project `gcloud auth application-default login`
+3. Insert the project id into [`Makefile`](Makefile) (`GCP_PROJECT=<your_project_id>`)
+4. Set `TF_BUCKET_URI` in [`Makefile`](Makefile) to a unique Google Cloud Storage bucket name
+5. Create the bucket for storing Terraform state (`make create-terraform-bucket`)
+6. Insert secrets into Google Cloud Secret Manager
    - GitHub OAuth (create [here](https://github.com/settings/developers))
      - `github_client_id`
      - `github_client_secret`
@@ -77,7 +78,8 @@ Coming soon
      - `mongodbatlas_public_key`
      - `mongodbatlas_private_key`
      - `atlas_project_id`
-6. Set `DOMAIN` in [`Makefile`](Makefile) to your domain
-7. `make deploy`
-8. Go to Google Cloud DNS, `main-zone`, copy the `NS` record to your domain registrar
-9. The app should be live at `https://${DOMAIN}`
+7. Add `0.0.0.0/0` to your MongoDB project "IP Access List"
+8. Set `DOMAIN` in [`Makefile`](Makefile) to your domain
+9. `make deploy`
+10. Go to Google Cloud DNS, `main-zone`, copy the `NS` record to your domain registrar
+11. The app should be live at `https://${DOMAIN}`

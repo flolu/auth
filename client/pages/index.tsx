@@ -1,9 +1,9 @@
-import {Logout} from 'components/logout'
+import {GitHubSignIn} from 'components/github-sign-in'
 
 export default function Home() {
   return (
-    <main>
-      <Logout />
+    <main className="flex items-center justify-center h-full">
+      <GitHubSignIn />
     </main>
   )
 }

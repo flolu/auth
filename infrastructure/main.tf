@@ -34,7 +34,6 @@ module "mongodb" {
   atlas_project_id         = var.atlas_project_id
   mongodbatlas_public_key  = var.mongodbatlas_public_key
   mongodbatlas_private_key = var.mongodbatlas_private_key
-  ip                       = module.ingress.ip
 }
 
 module "configuration" {
