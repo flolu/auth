@@ -1,2 +1,2 @@
-variable "container_regsitry" { type = string }
+variable "image" { type = string }
 variable "config_name" { type = string }

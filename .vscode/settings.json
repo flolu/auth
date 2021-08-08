@@ -5,7 +5,7 @@
   },
   "cSpell.words": ["MONGODB", "Parens", "inversify", "uuidv"],
 
-  "LineCount.includes": ["**/*.ts", "**/*.tsx"],
+  "LineCount.includes": ["**/*.ts", "**/*.tsx", "**/*.tf"],
 
   "workbench.colorCustomizations": {
     "activityBar.background": "#000307",

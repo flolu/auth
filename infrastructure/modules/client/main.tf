@@ -42,9 +42,8 @@ resource "kubernetes_deployment" "client" {
 
       spec {
         container {
-          name              = "client"
-          image             = "${var.container_regsitry}/client:latest"
-          image_pull_policy = "Always"
+          name  = "client"
+          image = var.image
 
           env_from {
             secret_ref {

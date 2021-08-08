@@ -1,4 +1,4 @@
-variable "container_regsitry" { type = string }
+variable "image" { type = string }
 variable "environment" { type = string }
 variable "api_url" { type = string }
 variable "github_client_id" { type = string }

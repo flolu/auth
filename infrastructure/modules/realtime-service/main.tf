@@ -23,9 +23,8 @@ resource "kubernetes_deployment" "realtime" {
 
       spec {
         container {
-          name              = "realtime"
-          image             = "${var.container_regsitry}/realtime:latest"
-          image_pull_policy = "Always"
+          name  = "realtime"
+          image = var.image
 
           env_from {
             secret_ref {
