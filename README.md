@@ -42,7 +42,7 @@ Coming soon
 **Services**
 
 - [`client`](client) **Next.js client** (web application)
-- [`server`](server) **Node.js server** (http api)
+- [`api`](api) **Node.js server** (http api)
 - [`realtime`](realtime) **Node.js server** (websocket server)
 - [`shared`](shared) **Typescript lib** (shared code)
 - [`infrastructure`](infrastructure) **Terraform** (configurations to deploy application in the cloud)

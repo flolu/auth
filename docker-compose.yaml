@@ -5,14 +5,14 @@ services:
     container_name: auth_api
     volumes:
       - ./node_modules:/node_modules
-      - ./server:/server
+      - ./api:/api
       - ./shared:/shared
       - ./tsconfig.json:/tsconfig.json
       - ./package.json:/package.json
     ports:
       - '3001:3000'
     working_dir: /
-    command: yarn run ts-node-dev --project server/tsconfig.json -r tsconfig-paths/register server/index.ts
+    command: yarn run ts-node-dev --project api/tsconfig.json -r tsconfig-paths/register api/index.ts
     env_file: .env.development
 
   realtime-service:

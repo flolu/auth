@@ -1,7 +1,4 @@
 {
   "extends": "../tsconfig.json",
-  "compilerOptions": {
-    "types": ["node"]
-  },
   "references": [{"path": "../shared"}]
 }

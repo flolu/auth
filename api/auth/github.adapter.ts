@@ -2,7 +2,11 @@ import axios from 'axios'
 import {injectable} from 'inversify'
 
 import {ConfigService} from '../config.service'
-import {GitHubUser} from './auth.schema'
+
+interface GitHubUser {
+  id: number
+  name: string
+}
 
 interface AccessTokenResponse {
   access_token: string

@@ -1,11 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es2015",
-    "module": "commonjs",
+    "target": "es5",
     "strict": true,
-    "alwaysStrict": true,
     "esModuleInterop": true,
-    "declaration": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "composite": true,
