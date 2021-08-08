@@ -1,27 +1,32 @@
 # Development
 
+setup:
+	cp --no-clobber .env.template .env.development
+	cp --no-clobber client/.env.template .env.development
+	yarn install
+	cd client && yarn install
+
 .PHONY: client
 client:
 	cd client && yarn next
 
-.PHONY: server
-server:
+backend:
 	docker-compose -f docker-compose.yaml up --build
 
 # Deployment
 
 GCP_PROJECT=flolu-auth-demo-test
+TF_BUCKET_URI=gs://flolu-auth-demo-test-terraform-state
+DOMAIN=auth.flolu.de
 
 define get-secret
 $(shell gcloud secrets versions access latest --secret=$(1) --project=$(GCP_PROJECT))
 endef
 
-GKE_CLUSTER=cluster
 GKE_ZONE=europe-west3-a
-TF_BUCKET_URI=gs://flolu-auth-demo-test-terraform-state
+GKE_CLUSTER=cluster
 K8S_CONTEXT=gke_${GCP_PROJECT}_${GKE_ZONE}_${GKE_CLUSTER}
 IMAGE_REPO=eu.gcr.io/${GCP_PROJECT}
-DOMAIN=auth.flolu.de
 CLIENT_URL=https://${DOMAIN}
 API_URL=https://api.${DOMAIN}
 REALTIME_URL=wss://realtime.${DOMAIN}

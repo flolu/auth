@@ -3,7 +3,7 @@
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "cSpell.words": ["MONGODB", "Parens", "inversify", "uuidv"],
+  "cSpell.words": ["Kubernetes", "MONGODB", "Parens", "inversify", "uuidv"],
 
   "LineCount.includes": ["**/*.ts", "**/*.tsx", "**/*.tf"],
 
