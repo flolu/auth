@@ -34,7 +34,7 @@ export const authorizeClient = (request: IncomingMessage, socket: Socket) => {
 
 const refreshAccessToken = async (socket: AugmentedSocket) => {
   const payload = {refreshToken: socket.refreshToken}
-  const response = await axios.post<RefreshTokensServer>(`${apiUrl}/auth/refresh-ssr`, payload, {
+  const response = await axios.post<RefreshTokensServer>(`${apiUrl}/refresh-ssr`, payload, {
     headers: {Authorization: internalSecret},
   })
   return jwt.verify(response.data.accessToken, accessTokenSecret) as AccessToken

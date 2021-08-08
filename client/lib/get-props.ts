@@ -18,7 +18,7 @@ export const withUser = <T>(
   const getServerSideProps: GetServerSideProps<T> = async context => {
     const fetcher = <T>(url: string) => fetcherSSR<T>(context.req, context.res, url)
 
-    const [error, user] = await fetcher<UserDocument>(`${environment.apiUrl}/user/me`)
+    const [error, user] = await fetcher<UserDocument>(`${environment.apiUrl}/me`)
     if (error || !user) return {redirect: {statusCode: 307, destination: '/'}}
 
     const result = getProps ? await getProps({context, fetcher, user}) : {}

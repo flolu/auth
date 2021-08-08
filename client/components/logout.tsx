@@ -8,12 +8,12 @@ export const Logout: FC = () => {
   const {user} = useUser()
 
   const onLogout = async () => {
-    await poster(`${environment.apiUrl}/auth/logout`)
+    await poster(`${environment.apiUrl}/logout`)
     Router.replace('/')
   }
 
   const onLogoutAll = async () => {
-    await poster(`${environment.apiUrl}/auth/logout-all`)
+    await poster(`${environment.apiUrl}/logout-all`)
     Router.replace('/')
   }
 

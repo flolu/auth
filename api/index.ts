@@ -1,30 +1,77 @@
-import 'reflect-metadata'
-
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
-import {Container} from 'inversify'
-import {InversifyExpressServer} from 'inversify-express-utils'
+import express from 'express'
 
-import {authModule} from './auth'
-import {ConfigService} from './config.service'
-import {Database} from './database'
-import {IndexController} from './index.controller'
-import {userModule} from './user'
+import {Cookies} from '@shared'
 
-let container = new Container()
+import {authMiddleware} from './auth-middleware'
+import {config} from './config'
+import {database} from './database'
+import {getGitHubUser} from './github-adapter'
+import {internalMiddleware} from './internal-middleware'
+import {
+  buildTokens,
+  clearTokens,
+  refreshTokens,
+  setAuthTokens,
+  verifyRefreshToken,
+} from './token-utils'
+import {createUser, getUserByGitHubId, getUserById, increaseTokenVersion} from './user-service'
 
-container.bind(IndexController).toSelf()
-container.bind(ConfigService).toSelf()
-container.bind(Database).toSelf()
+const app = express()
+app.use(cors({credentials: true, origin: true}))
+app.use(cookieParser())
 
-container.load(authModule)
-container.load(userModule)
+app.get('/', (req, res) => res.send('api'))
 
-const server = new InversifyExpressServer(container)
+app.get('/github', async (req, res) => {
+  const {code} = req.query
 
-server.setConfig(app => {
-  app.use(cors({credentials: true, origin: true}))
-  app.use(cookieParser())
+  const gitHubUser = await getGitHubUser(code as string)
+  let user = await getUserByGitHubId(gitHubUser.id)
+  if (!user) user = await createUser(gitHubUser.name, gitHubUser.id)
+
+  const {accessToken, refreshToken} = buildTokens(user)
+  setAuthTokens(res, accessToken, refreshToken)
+
+  res.redirect(`${config.clientUrl}/me`)
 })
 
-server.build().listen(3000)
+app.post('/refresh', async (req, res) => {
+  const current = verifyRefreshToken(req.cookies[Cookies.RefreshToken])
+  const user = await getUserById(current.userId)
+  if (!user) throw 'User not found'
+
+  const {accessToken, refreshToken} = refreshTokens(current, user.tokenVersion)
+  setAuthTokens(res, accessToken, refreshToken)
+  res.end()
+})
+
+app.post('/refresh-ssr', internalMiddleware, async (req, res) => {
+  const current = verifyRefreshToken(req.cookies[Cookies.RefreshToken])
+  const user = await getUserById(current.userId)
+  if (!user) throw 'User not found'
+
+  const {accessToken, refreshToken} = refreshTokens(current, user.tokenVersion)
+  res.json({accessToken, refreshToken})
+})
+
+app.post('/logout', authMiddleware, (req, res) => {
+  clearTokens(res)
+  res.end()
+})
+
+app.post('/logout-all', authMiddleware, async (req, res) => {
+  await increaseTokenVersion(res.locals.token.userId)
+  clearTokens(res)
+  res.end()
+})
+
+app.get('/me', authMiddleware, async (req, res) => {
+  const user = await getUserById(res.locals.token.userId)
+  res.json(user)
+})
+
+database.client.connect().then(() => {
+  app.listen(3000)
+})

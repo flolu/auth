@@ -66,7 +66,7 @@ const refreshTokens = async (req: IncomingMessage, res: ServerResponse) => {
   try {
     const payload = {refreshToken: currentRefreshToken}
     const response = await axios.post<RefreshTokensServer>(
-      `${environment.apiUrl}/auth/refresh-ssr`,
+      `${environment.apiUrl}/refresh-ssr`,
       payload,
       {
         headers: {Authorization: environment.internalSecret},

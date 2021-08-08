@@ -1,43 +1,15 @@
-import retry from 'async-retry'
-import {injectable, postConstruct} from 'inversify'
 import * as mongodb from 'mongodb'
 
-import {ConfigService} from './config.service'
+import {config} from './config'
 
-@injectable()
-export class Database {
-  private url = this.config.mongoURL
-  private user = this.config.mongoUser
-  private password = this.config.mongoPassword
-  private name = this.config.mongoDatabase
-  private isInitialized = false
-  private client = new mongodb.MongoClient(this.url, {
-    auth: {username: this.user, password: this.password},
-  })
+const url = config.mongoURL
+const user = config.mongoUser
+const password = config.mongoPassword
+const databaseName = config.mongoDatabase
+const client = new mongodb.MongoClient(url, {auth: {username: user, password}})
 
-  constructor(private config: ConfigService) {}
-
-  @postConstruct()
-  async init() {
-    await this.waitForInitialized(true)
-    this.isInitialized = true
-  }
-
-  async collection<T>(name: string) {
-    await this.waitForInitialized()
-    const db = this.client.db(this.name)
-    return db.collection<T>(name)
-  }
-
-  async waitForInitialized(skipInitCheck = false) {
-    if (this.isInitialized) return
-
-    await this.client.connect()
-
-    if (!this.isInitialized && !skipInitCheck) {
-      await retry(() => {
-        if (!this.isInitialized) throw new Error()
-      })
-    }
-  }
+async function collection<T>(name: string) {
+  return client.db(databaseName).collection<T>(name)
 }
+
+export const database = {client, collection}

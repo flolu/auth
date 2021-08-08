@@ -31,7 +31,7 @@ CLIENT_URL=https://${DOMAIN}
 API_URL=https://api.${DOMAIN}
 REALTIME_URL=wss://realtime.${DOMAIN}
 GITHUB_CLIENT_ID=$(call get-secret,github_client_id)
-GITHUB_REDIRECT_URL=${API_URL}/auth/github
+GITHUB_REDIRECT_URL=${API_URL}/github
 INTERNAL_SECRET=$(call get-secret,internal_secret)
 
 build-client-env:
