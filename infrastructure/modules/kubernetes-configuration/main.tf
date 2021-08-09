@@ -10,10 +10,10 @@ resource "kubernetes_secret" "k8s_config" {
   data = {
     NODE_ENV = var.environment
 
-    BASE_DOMAIN          = var.base_domain
-    API_URL              = var.api_url
-    CLIENT_URL           = var.client_url
-    REALTIME_SERVICE_URL = var.realtime_service_url
+    BASE_DOMAIN  = var.base_domain
+    API_URL      = var.api_url
+    CLIENT_URL   = var.client_url
+    REALTIME_URL = var.realtime_url
 
     MONGODB_DATABASE = var.mongodb_database
     MONGODB_URL      = var.mongodb_url

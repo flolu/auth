@@ -4,8 +4,6 @@ resource "kubernetes_deployment" "realtime" {
   }
 
   spec {
-    # Only one replica for simplicity purposes
-    # Otherwise realtime communication would be more complex
     replicas = 1
 
     selector {

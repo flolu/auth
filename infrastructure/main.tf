@@ -1,20 +1,21 @@
 terraform {
   backend "gcs" {
     bucket = "flolu-auth-demo-test-terraform-state"
-    prefix = "prod"
+    prefix = "production"
   }
 }
 
 module "kubernetes" {
   source       = "./modules/google-kubernetes-engine"
   project      = var.google_cloud_project
-  region       = "europe-west3-a"
+  region       = var.gke_zone
   machine_type = "e2-small"
 }
 
 module "cert_manager" {
   source              = "./modules/kubernetes-cert-manager"
   kubernetes_endpoint = module.kubernetes.endpoint
+  email               = var.email
 }
 
 module "ingress" {
@@ -30,10 +31,8 @@ module "dns" {
 }
 
 module "mongodb" {
-  source                   = "./modules/mongodb-atlas"
-  atlas_project_id         = var.atlas_project_id
-  mongodbatlas_public_key  = var.mongodbatlas_public_key
-  mongodbatlas_private_key = var.mongodbatlas_private_key
+  source           = "./modules/mongodb-atlas"
+  atlas_project_id = var.atlas_project_id
 }
 
 module "configuration" {
@@ -41,10 +40,10 @@ module "configuration" {
 
   environment = var.environment
 
-  base_domain          = var.domain
-  client_url           = var.client_url
-  api_url              = var.api_url
-  realtime_service_url = var.realtime_url
+  base_domain  = var.domain
+  client_url   = var.client_url
+  api_url      = var.api_url
+  realtime_url = var.realtime_url
 
   mongodb_database = module.mongodb.database
   mongodb_url      = module.mongodb.url

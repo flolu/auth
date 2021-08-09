@@ -12,7 +12,7 @@ resource "kubernetes_secret" "k8s_config" {
     NEXT_PUBLIC_API_URL             = var.api_url
     NEXT_PUBLIC_GITHUB_CLIENT_ID    = var.github_client_id
     NEXT_PUBLIC_GITHUB_REDIRECT_URL = var.github_redirect_url
-    NEXT_PUBLIC_WEBSOCKET_URL       = var.realtime_url
+    NEXT_PUBLIC_REALTIME_URL        = var.realtime_url
     BASE_DOMAIN                     = var.domain
     INTERNAL_SECRET                 = var.internal_secret
   }

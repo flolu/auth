@@ -16,17 +16,19 @@ backend:
 # Deployment
 
 GCP_PROJECT=flolu-auth-demo-test
-TF_BUCKET_URI=gs://flolu-auth-demo-test-terraform-state
+TF_BUCKET=flolu-auth-demo-test-terraform-state
 DOMAIN=auth.flolu.de
+EMAIL=flo@drakery.com
+GKE_ZONE=europe-west3-a
 
 define get-secret
 $(shell gcloud secrets versions access latest --secret=$(1) --project=$(GCP_PROJECT))
 endef
 
-GKE_ZONE=europe-west3-a
+TF_BUCKET_URI=gs://${TF_BUCKET}
 GKE_CLUSTER=cluster
 K8S_CONTEXT=gke_${GCP_PROJECT}_${GKE_ZONE}_${GKE_CLUSTER}
-IMAGE_REPO=eu.gcr.io/${GCP_PROJECT}
+IMAGE_REPO=gcr.io/${GCP_PROJECT}
 CLIENT_URL=https://${DOMAIN}
 API_URL=https://api.${DOMAIN}
 REALTIME_URL=wss://realtime.${DOMAIN}
@@ -40,7 +42,7 @@ build-client-env:
 	NEXT_PUBLIC_API_URL=${API_URL}\n\
 	NEXT_PUBLIC_GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}\n\
 	NEXT_PUBLIC_GITHUB_REDIRECT_URL=${GITHUB_REDIRECT_URL}\n\
-	NEXT_PUBLIC_WEBSOCKET_URL=${REALTIME_URL}\n\
+	NEXT_PUBLIC_REALTIME_URL=${REALTIME_URL}\n\
 	BASE_DOMAIN=${DOMAIN}\n\
 	INTERNAL_SECRET=${INTERNAL_SECRET}\
 	" > client/.env.production
@@ -74,6 +76,8 @@ GET_IMAGE_SHA=docker inspect --format='{{index .RepoDigests 0}}'
 terraform-action:
 	@cd infrastructure && \
 	terraform ${TF_ACTION} \
+	\
+	-var="email=${EMAIL}" \
 	-var="google_cloud_project=${GCP_PROJECT}" \
 	\
 	-var="mongodbatlas_public_key=$(call get-secret,mongodbatlas_public_key)" \
@@ -95,7 +99,9 @@ terraform-action:
 	\
 	-var="client_image=$(shell $(GET_IMAGE_SHA) $(IMAGE_REPO)/client)" \
 	-var="realtime_image=$(shell $(GET_IMAGE_SHA) $(IMAGE_REPO)/realtime)" \
-	-var="api_image=$(shell $(GET_IMAGE_SHA) $(IMAGE_REPO)/api)"
+	-var="api_image=$(shell $(GET_IMAGE_SHA) $(IMAGE_REPO)/api)" \
+	\
+	-var="gke_zone=${GKE_ZONE}"
 
 plan:
 	$(MAKE) TF_ACTION=plan terraform-action

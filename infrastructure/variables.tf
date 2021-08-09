@@ -3,7 +3,9 @@ variable "environment" {
   default = "production"
 }
 
+variable "email" { type = string }
 variable "google_cloud_project" { type = string }
+variable "tf_bucket" { type = string }
 
 variable "domain" { type = string }
 variable "client_url" { type = string }
@@ -25,3 +27,5 @@ variable "github_redirect_url" { type = string }
 variable "client_image" { type = string }
 variable "api_image" { type = string }
 variable "realtime_image" { type = string }
+
+variable "gke_zone" { type = string }
