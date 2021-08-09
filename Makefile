@@ -2,7 +2,7 @@
 
 setup:
 	cp --no-clobber .env.template .env.development
-	cp --no-clobber client/.env.template .env.development
+	cp --no-clobber client/.env.template client/.env.development
 	yarn install
 	cd client && yarn install
 
@@ -15,8 +15,8 @@ backend:
 
 # Deployment
 
-GCP_PROJECT=flolu-auth-demo-test
-TF_BUCKET=flolu-auth-demo-test-terraform-state
+GCP_PROJECT=flolu-auth-demo-test-322406
+TF_BUCKET=flolu-auth-demo-test-322406-terraform-state
 DOMAIN=auth.flolu.de
 EMAIL=flo@drakery.com
 GKE_ZONE=europe-west3-a
@@ -52,7 +52,7 @@ client-image: build-client-env
 	docker push ${IMAGE_REPO}/client
 
 api-image:
-	docker build -f server/Dockerfile -t ${IMAGE_REPO}/api:latest .
+	docker build -f api/Dockerfile -t ${IMAGE_REPO}/api:latest .
 	docker push ${IMAGE_REPO}/api:latest
 
 realtime-image:

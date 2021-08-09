@@ -100,6 +100,7 @@ resource "kubernetes_ingress" "ingress" {
     }
   }
 
-  depends_on = [helm_release.nginx_ingress]
+  wait_for_load_balancer = true
+  depends_on             = [helm_release.nginx_ingress]
 }
 

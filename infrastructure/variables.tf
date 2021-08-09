@@ -5,7 +5,6 @@ variable "environment" {
 
 variable "email" { type = string }
 variable "google_cloud_project" { type = string }
-variable "tf_bucket" { type = string }
 
 variable "domain" { type = string }
 variable "client_url" { type = string }

@@ -19,31 +19,31 @@ resource "helm_release" "cert_manager" {
   }
 }
 
-# Uncomment the first time you run terraform apply
-resource "kubernetes_manifest" "cluster_issuer" {
-  manifest = {
-    apiVersion = "cert-manager.io/v1"
-    kind       = "ClusterIssuer"
-    metadata = {
-      name = "letsencrypt"
-    }
-    spec = {
-      acme = {
-        server = "https://acme-v02.api.letsencrypt.org/directory"
-        email  = var.email
-        privateKeySecretRef = {
-          name = "letsencrypt-private-key"
-        }
-        solvers = [{
-          http01 = {
-            ingress = {
-              class = "nginx"
-            }
-          }
-        }]
-      }
-    }
-  }
+# Uncomment after the first run of deploy
+# resource "kubernetes_manifest" "cluster_issuer" {
+#   manifest = {
+#     apiVersion = "cert-manager.io/v1"
+#     kind       = "ClusterIssuer"
+#     metadata = {
+#       name = "letsencrypt"
+#     }
+#     spec = {
+#       acme = {
+#         server = "https://acme-v02.api.letsencrypt.org/directory"
+#         email  = var.email
+#         privateKeySecretRef = {
+#           name = "letsencrypt-private-key"
+#         }
+#         solvers = [{
+#           http01 = {
+#             ingress = {
+#               class = "nginx"
+#             }
+#           }
+#         }]
+#       }
+#     }
+#   }
 
-  depends_on = [helm_release.cert_manager]
-}
+#   depends_on = [helm_release.cert_manager]
+# }

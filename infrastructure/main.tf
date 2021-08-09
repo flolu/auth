@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = "flolu-auth-demo-test-terraform-state"
+    bucket = "flolu-auth-demo-test-322406-terraform-state"
     prefix = "production"
   }
 }
@@ -31,8 +31,10 @@ module "dns" {
 }
 
 module "mongodb" {
-  source           = "./modules/mongodb-atlas"
-  atlas_project_id = var.atlas_project_id
+  source                   = "./modules/mongodb-atlas"
+  atlas_project_id         = var.atlas_project_id
+  mongodbatlas_public_key  = var.mongodbatlas_public_key
+  mongodbatlas_private_key = var.mongodbatlas_private_key
 }
 
 module "configuration" {

@@ -32,8 +32,13 @@ Coming soon
 **Setup**
 
 - `make setup`
-- Configure secrets in [`.env.development`](.env.development) and [`client/.env.development`](client/.env.development)
-- Configure variables in [`Makefile`](Makefile)
+- Create GitHub OAuth app [here](https://github.com/settings/developers)
+  - Set "Homepage URL" to `http://localhost:3000`
+  - Set "Authorization callback URL" to `http://localhost:3000/github`
+  - Set `GITHUB_CLIENT_ID` in [`.env.development`](.env.development)
+  - Set `NEXT_PUBLIC_GITHUB_CLIENT_ID` in [`client/.env.development`](client/.env.development)
+  - "Generate a new client secret"
+  - Set `GITHUB_CLIENT_SECRET` in [`.env.development`](.env.development)
 
 **Development**
 
@@ -75,6 +80,7 @@ Coming soon
 4. Set `terraform.backend.bucket` in [infrastructure/main.tf](infrastructure/main.tf) to `TF_BUCKET`
 5. Insert secrets into Google Cloud Secret Manager
    - GitHub OAuth (create [here](https://github.com/settings/developers))
+     - Set "Authorization callback URL" to `https://${DOMAIN}/github`
      - `github_client_id`
      - `github_client_secret`
    - Secrets (generate [here](https://randomkeygen.com))
@@ -82,10 +88,16 @@ Coming soon
      - `refresh_token_secret`
      - `access_token_secret`
    - MongoDB Atlas (create a free cluster [here](https://www.mongodb.com/cloud/atlas))
+     - Navigate to Project Settings -> Access Manager -> API Keys -> Create API Key -> Select Project Owner
      - `mongodbatlas_public_key`
      - `mongodbatlas_private_key`
-     - `atlas_project_id`
+     - `atlas_project_id` (found under Settings)
 6. Add `0.0.0.0/0` to your MongoDB Atlas project "IP Access List"
-7. `make deploy`
-8. Go to Google Cloud DNS, `main-zone`, copy the `NS` record to your domain registrar
-9. The app should be live at `https://${DOMAIN}`
+7. Enable [Container Registry](https://cloud.google.com/container-registry) in your GCP console
+8. `make init-infrastructure`
+9. `make deploy`
+10. Go to Google Cloud DNS, `main-zone`, copy the `NS` record to your domain registrar
+11. Uncomment code block in [infrastructure/modules/kubernetes-cert-manager/main.tf](infrastructure/modules/kubernetes-cert-manager/main.tf) and run `make apply`
+12. The app should be live at `https://${DOMAIN}`
+
+- Every time you want to deploy changes, just run `make deploy`
