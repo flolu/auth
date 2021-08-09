@@ -48,7 +48,7 @@ app.post('/refresh', async (req, res) => {
 })
 
 app.post('/refresh-ssr', internalMiddleware, async (req, res) => {
-  const current = verifyRefreshToken(req.cookies[Cookies.RefreshToken])
+  const current = verifyRefreshToken(req.body.refreshToken)
   const user = await getUserById(current.userId)
   if (!user) throw 'User not found'
 
