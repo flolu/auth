@@ -7,5 +7,4 @@ export const environment = {
   websocketUrl: process.env.NEXT_PUBLIC_REALTIME_URL!,
 
   baseDomain: process.env.BASE_DOMAIN!,
-  internalSecret: process.env.INTERNAL_SECRET!,
 }

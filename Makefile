@@ -43,7 +43,6 @@ build-client-env:
 	NEXT_PUBLIC_GITHUB_REDIRECT_URL=${GITHUB_REDIRECT_URL}\n\
 	NEXT_PUBLIC_REALTIME_URL=${REALTIME_URL}\n\
 	BASE_DOMAIN=${DOMAIN}\n\
-	INTERNAL_SECRET=${INTERNAL_SECRET}\
 	" > client/.env.production
 
 client-image: build-client-env

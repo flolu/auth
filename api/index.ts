@@ -9,7 +9,13 @@ import {config} from './config'
 import {database} from './database'
 import {getGitHubUser} from './github-adapter'
 import {buildTokens, clearTokens, refreshTokens, setTokens, verifyRefreshToken} from './token-utils'
-import {createUser, getUserByGitHubId, getUserById, increaseTokenVersion} from './user-service'
+import {
+  createUser,
+  getUserByGitHubId,
+  getUserById,
+  increaseTokenVersion,
+  setupUserIndexes,
+} from './user-service'
 
 const app = express()
 app.use(cors({credentials: true, origin: true}))
@@ -61,6 +67,7 @@ app.get('/me', authMiddleware, async (req, res) => {
   res.json(user)
 })
 
-database.client.connect().then(() => {
+database.client.connect().then(async () => {
+  await setupUserIndexes()
   app.listen(3000)
 })

@@ -1,10 +1,8 @@
 export const config = {
-  environment: process.env.NODE_ENV!,
   isProduction: process.env.NODE_ENV! === 'production',
   clientUrl: process.env.CLIENT_URL!,
   baseDomain: process.env.BASE_DOMAIN!,
 
-  internalSecret: process.env.INTERNAL_SECRET!,
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET!,
   refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET!,
 

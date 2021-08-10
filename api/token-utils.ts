@@ -7,11 +7,16 @@ import {
   Cookies,
   RefreshToken,
   RefreshTokenPayload,
-  TokenExpiration,
   UserDocument,
 } from '@shared'
 
 import {config} from './config'
+
+enum TokenExpiration {
+  Access = 5 * 60,
+  Refresh = 7 * 24 * 60 * 60,
+  RefreshIfLessThan = 4 * 24 * 60 * 60,
+}
 
 function signAccessToken(payload: AccessTokenPayload) {
   return jwt.sign(payload, config.accessTokenSecret, {expiresIn: TokenExpiration.Access})
