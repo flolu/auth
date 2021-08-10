@@ -73,7 +73,7 @@ export function refreshTokens(current: RefreshToken, tokenVersion: number) {
   const secondsUntilExpiration =
     (new Date(current.exp * 1000).getTime() - new Date().getTime()) / 1000
   if (secondsUntilExpiration < TokenExpiration.RefreshIfLessThan) {
-    refreshPayload = {userId: current.userId, version: current.version}
+    refreshPayload = {userId: current.userId, version: tokenVersion}
   }
 
   const accessToken = signAccessToken(accessPayload)
