@@ -1,125 +1,43 @@
 import axios, {AxiosResponse} from 'axios'
-import cookie from 'cookie'
 import {IncomingMessage, ServerResponse} from 'http'
 
-import {Cookies, RefreshTokensServer, TokenExpiration} from '@shared'
+import {RefreshTokensServer} from '@shared'
 
 import {environment} from './environment'
 import {getError} from './errors'
 import {QueryResponse} from './fetcher'
 
-const getRefreshToken = (req: IncomingMessage) => {
-  if (!req.headers.cookie) return ''
-  const cookies = cookie.parse(req.headers.cookie)
-  return cookies[Cookies.RefreshToken] || ''
-}
-
-const cookieOptions: cookie.CookieSerializeOptions = {
-  httpOnly: true,
-  secure: environment.isProduction,
-  sameSite: environment.isProduction ? 'strict' : 'lax',
-  domain: environment.baseDomain,
-  path: '/',
-}
-
-const accessTokenCookieOptions: cookie.CookieSerializeOptions = {
-  ...cookieOptions,
-  maxAge: TokenExpiration.Access,
-}
-
-const refreshTokenCookieOptions: cookie.CookieSerializeOptions = {
-  ...cookieOptions,
-  maxAge: TokenExpiration.Refresh,
-}
-
-const setCookies = (res: ServerResponse, accessToken: string, refreshToken?: string) => {
-  let refreshTokenCookie = ''
-  if (refreshToken) {
-    refreshTokenCookie = cookie.serialize(
-      Cookies.RefreshToken,
-      refreshToken,
-      refreshTokenCookieOptions
-    )
-  }
-  const accessTokenCookie = cookie.serialize(
-    Cookies.AccessToken,
-    accessToken,
-    accessTokenCookieOptions
-  )
-
-  res.setHeader(
-    'Set-Cookie',
-    refreshTokenCookie ? [accessTokenCookie, refreshTokenCookie] : accessTokenCookie
-  )
-}
-
-const clearCookies = (res: ServerResponse) => {
-  const refresh = cookie.serialize(Cookies.RefreshToken, '', {maxAge: 0})
-  const access = cookie.serialize(Cookies.AccessToken, '', {maxAge: 0})
-  res.setHeader('Set-Cookie', [refresh, access])
-}
+const SET_COOKIE_HEADER = 'set-cookie'
 
 const refreshTokens = async (req: IncomingMessage, res: ServerResponse) => {
-  const currentRefreshToken = getRefreshToken(req)
-  if (!currentRefreshToken) throw 'No refresh token'
+  const response = await axios.post<RefreshTokensServer>(
+    `${environment.apiUrl}/refresh`,
+    undefined,
+    {headers: {cookie: req.headers.cookie}}
+  )
+  const cookies = response.headers[SET_COOKIE_HEADER]
 
-  try {
-    const payload = {refreshToken: currentRefreshToken}
-    const response = await axios.post<RefreshTokensServer>(
-      `${environment.apiUrl}/refresh-ssr`,
-      payload,
-      {
-        headers: {Authorization: environment.internalSecret},
-        withCredentials: true,
-      }
-    )
-    const {accessToken, refreshToken} = response.data
-    setCookies(res, accessToken, refreshToken)
-    return {accessToken}
-  } catch (err) {
-    if (err === 'Token revoked') {
-      clearCookies(res)
-    }
-    throw err
-  }
-}
-
-const getAccessToken = (req: IncomingMessage) => {
-  if (!req.headers.cookie) return undefined
-  const cookies = cookie.parse(req.headers.cookie)
-  return cookies[Cookies.AccessToken] || undefined
+  req.headers.cookie = cookies
+  res.setHeader(SET_COOKIE_HEADER, cookies)
 }
 
 const handleRequest = async (
   req: IncomingMessage,
   res: ServerResponse,
-  executeRequest: (accessToken: string) => Promise<AxiosResponse>
+  executeRequest: () => Promise<AxiosResponse>
 ) => {
-  const currentAccessToken = getAccessToken(req)
-  if (currentAccessToken) {
-    try {
-      const response = await executeRequest(currentAccessToken)
-      return response.data
-    } catch (error) {
-      if (error?.response?.status === 401) {
-        try {
-          const {accessToken} = await refreshTokens(req, res)
-          const innerResponse = await executeRequest(accessToken)
-          return innerResponse.data
-        } catch (innerError) {
-          throw getError(innerError)
-        }
+  try {
+    return await executeRequest()
+  } catch (error) {
+    if (error?.response?.status === 401) {
+      try {
+        await refreshTokens(req, res)
+        return await executeRequest()
+      } catch (innerError) {
+        throw getError(innerError)
       }
-      throw getError(error)
     }
-  } else {
-    try {
-      const {accessToken} = await refreshTokens(req, res)
-      const response = await executeRequest(accessToken)
-      return response.data
-    } catch (error) {
-      throw getError(error)
-    }
+    throw getError(error)
   }
 }
 
@@ -129,12 +47,9 @@ export const fetcherSSR = async <T>(
   url: string
 ): Promise<QueryResponse<T>> => {
   try {
-    const data = await handleRequest(req, res, (accessToken: string) =>
-      axios.get(url, {
-        headers: {Authorization: accessToken},
-        withCredentials: true,
-      })
-    )
+    const {data} = await handleRequest(req, res, () => {
+      return axios.get(url, {headers: {cookie: req.headers.cookie}})
+    })
     return [null, data]
   } catch (error) {
     return [error, null]

@@ -52,7 +52,6 @@ module "configuration" {
   mongodb_user     = module.mongodb.user
   mongodb_password = module.mongodb.password
 
-  internal_secret      = var.internal_secret
   refresh_token_secret = var.refresh_token_secret
   access_token_secret  = var.access_token_secret
 
@@ -83,5 +82,4 @@ module "client" {
   github_redirect_url = var.github_redirect_url
   realtime_url        = var.realtime_url
   domain              = var.domain
-  internal_secret     = var.internal_secret
 }

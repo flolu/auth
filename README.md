@@ -84,7 +84,6 @@ Coming soon
      - `github_client_id`
      - `github_client_secret`
    - Secrets (generate [here](https://randomkeygen.com))
-     - `internal_secret`
      - `refresh_token_secret`
      - `access_token_secret`
    - MongoDB Atlas (create a free cluster [here](https://www.mongodb.com/cloud/atlas))

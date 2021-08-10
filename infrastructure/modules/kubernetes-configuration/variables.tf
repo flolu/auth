@@ -10,7 +10,6 @@ variable "mongodb_url" { type = string }
 variable "mongodb_user" { type = string }
 variable "mongodb_password" { type = string }
 
-variable "internal_secret" { type = string }
 variable "refresh_token_secret" { type = string }
 variable "access_token_secret" { type = string }
 

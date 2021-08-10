@@ -14,7 +14,6 @@ resource "kubernetes_secret" "k8s_config" {
     NEXT_PUBLIC_GITHUB_REDIRECT_URL = var.github_redirect_url
     NEXT_PUBLIC_REALTIME_URL        = var.realtime_url
     BASE_DOMAIN                     = var.domain
-    INTERNAL_SECRET                 = var.internal_secret
   }
 }
 

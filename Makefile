@@ -34,7 +34,6 @@ API_URL=https://api.${DOMAIN}
 REALTIME_URL=wss://realtime.${DOMAIN}
 GITHUB_CLIENT_ID=$(call get-secret,github_client_id)
 GITHUB_REDIRECT_URL=${API_URL}/github
-INTERNAL_SECRET=$(call get-secret,internal_secret)
 
 build-client-env:
 	@echo "\
@@ -84,7 +83,6 @@ terraform-action:
 	-var="mongodbatlas_private_key=$(call get-secret,mongodbatlas_private_key)" \
 	-var="atlas_project_id=$(call get-secret,atlas_project_id)" \
 	\
-	-var="internal_secret=${INTERNAL_SECRET}" \
 	-var="refresh_token_secret=$(call get-secret,refresh_token_secret)" \
 	-var="access_token_secret=$(call get-secret,access_token_secret)" \
 	\

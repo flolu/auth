@@ -11,16 +11,16 @@ const refreshTokens = async () => {
   })
 }
 
-const handleRequest = async <T>(executeRequest: () => Promise<AxiosResponse>): Promise<T> => {
+const handleRequest = async <T>(
+  executeRequest: () => Promise<AxiosResponse<T>>
+): Promise<AxiosResponse<T>> => {
   try {
-    const response = await executeRequest()
-    return response.data
+    return await executeRequest()
   } catch (error) {
     if (error?.response?.status === 401) {
       try {
         await refreshTokens()
-        const innerResponse = await executeRequest()
-        return innerResponse.data
+        return await await executeRequest()
       } catch (innerError) {
         throw getError(innerError)
       }
@@ -32,7 +32,9 @@ const handleRequest = async <T>(executeRequest: () => Promise<AxiosResponse>): P
 
 export const fetcher = async <T>(url: string): Promise<QueryResponse<T>> => {
   try {
-    const data = await handleRequest<T>(() => axios.get(url, {withCredentials: true}))
+    const {data} = await handleRequest<T>(() => {
+      return axios.get(url, {withCredentials: true})
+    })
     return [null, data]
   } catch (error) {
     return [error, null]
@@ -41,7 +43,9 @@ export const fetcher = async <T>(url: string): Promise<QueryResponse<T>> => {
 
 export const poster = async <T>(url: string, payload?: unknown): Promise<QueryResponse<T>> => {
   try {
-    const data = await handleRequest<T>(() => axios.post<T>(url, payload, {withCredentials: true}))
+    const {data} = await handleRequest<T>(() => {
+      return axios.post<T>(url, payload, {withCredentials: true})
+    })
     return [null, data]
   } catch (error) {
     return [error, null]

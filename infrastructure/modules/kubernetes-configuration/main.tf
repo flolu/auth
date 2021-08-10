@@ -22,7 +22,6 @@ resource "kubernetes_secret" "k8s_config" {
 
     REFRESH_TOKEN_SECRET = var.refresh_token_secret
     ACCESS_TOKEN_SECRET  = var.access_token_secret
-    INTERNAL_SECRET      = var.internal_secret
 
     GITHUB_CLIENT_ID     = var.github_client_id
     GITHUB_CLIENT_SECRET = var.github_client_secret

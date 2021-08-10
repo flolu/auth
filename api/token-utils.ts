@@ -26,6 +26,7 @@ const defaultCookieOptions: CookieOptions = {
   secure: config.isProduction,
   sameSite: config.isProduction ? 'strict' : 'lax',
   domain: config.baseDomain,
+  path: '/',
 }
 
 const cookieOptions = {
@@ -59,7 +60,7 @@ export function buildTokens(user: UserDocument) {
   return {accessToken, refreshToken}
 }
 
-export function setAuthTokens(res: Response, access: string, refresh?: string) {
+export function setTokens(res: Response, access: string, refresh?: string) {
   res.cookie(Cookies.AccessToken, access, cookieOptions.access)
   if (refresh) res.cookie(Cookies.RefreshToken, refresh, cookieOptions.refresh)
 }
@@ -82,6 +83,6 @@ export function refreshTokens(current: RefreshToken, tokenVersion: number) {
 }
 
 export function clearTokens(res: Response) {
-  res.cookie(Cookies.AccessToken, '', {maxAge: 0})
-  res.cookie(Cookies.RefreshToken, '', {maxAge: 0})
+  res.clearCookie(Cookies.AccessToken)
+  res.clearCookie(Cookies.RefreshToken)
 }
