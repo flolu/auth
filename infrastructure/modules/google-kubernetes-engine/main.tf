@@ -9,9 +9,6 @@ resource "google_service_account" "kubernetes_cluster" {
   display_name = "Kubernetes Cluster Service Account"
 }
 
-# https://cloud.google.com/iam/docs/understanding-roles#cloud-storage-roles
-# Pull images from container registry
-# Create and edit bucket objects
 resource "google_project_iam_member" "storage_admin" {
   role   = "roles/storage.objectAdmin"
   member = "serviceAccount:${google_service_account.kubernetes_cluster.email}"
@@ -22,16 +19,13 @@ resource "google_container_cluster" "primary" {
   location                 = var.region
   initial_node_count       = 3
   remove_default_node_pool = true
-
   cluster_autoscaling {
     enabled = true
-
     resource_limits {
       resource_type = "cpu"
       minimum       = 1
       maximum       = 10
     }
-
     resource_limits {
       resource_type = "memory"
       minimum       = 1
@@ -47,12 +41,10 @@ resource "google_container_node_pool" "primary_nodes" {
   cluster    = google_container_cluster.primary.name
   location   = var.region
   node_count = 2
-
   autoscaling {
     min_node_count = 2
     max_node_count = 10
   }
-
   node_config {
     image_type      = "COS"
     preemptible     = true

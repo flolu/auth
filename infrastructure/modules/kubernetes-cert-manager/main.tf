@@ -12,7 +12,6 @@ resource "helm_release" "cert_manager" {
   cleanup_on_fail  = true
   namespace        = local.namespace
   create_namespace = true
-
   set {
     name  = "installCRDs"
     value = true

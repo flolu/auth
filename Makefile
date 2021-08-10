@@ -68,7 +68,7 @@ create-terraform-bucket:
 	gsutil versioning set on ${TF_BUCKET_URI}
 
 init-infrastructure:
-	cd infrastructure && terraform init
+	cd infrastructure && terraform init -reconfigure
 
 GET_IMAGE_SHA=docker inspect --format='{{index .RepoDigests 0}}'
 

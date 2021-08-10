@@ -1,57 +1,39 @@
-resource "kubernetes_deployment" "realtime" {
+resource "kubernetes_deployment" "deployment" {
   metadata {
-    name = "realtime"
+    name = var.name
   }
-
   spec {
     replicas = 1
-
     selector {
       match_labels = {
-        app = "realtime"
+        app = var.name
       }
     }
-
     template {
       metadata {
         labels = {
-          "app" = "realtime"
+          "app" = var.name
         }
       }
-
       spec {
         container {
-          name  = "realtime"
+          name  = var.name
           image = var.image
-
           env_from {
             secret_ref {
               name = var.config_name
             }
           }
-
           liveness_probe {
             http_get {
               path = "/"
               port = 3000
             }
           }
-
           readiness_probe {
             http_get {
               path = "/"
               port = 3000
-            }
-          }
-
-          resources {
-            limits = {
-              cpu    = "0.5"
-              memory = "512Mi"
-            }
-            requests = {
-              cpu    = "50m"
-              memory = "50Mi"
             }
           }
         }
@@ -60,18 +42,15 @@ resource "kubernetes_deployment" "realtime" {
   }
 }
 
-resource "kubernetes_service" "realtime" {
+resource "kubernetes_service" "service" {
   metadata {
-    name = "realtime"
+    name = var.name
   }
-
   spec {
     type = "NodePort"
-
     selector = {
-      app = "realtime"
+      app = var.name
     }
-
     port {
       name        = "http"
       port        = 3000

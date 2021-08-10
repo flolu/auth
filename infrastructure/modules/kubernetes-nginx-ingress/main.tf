@@ -19,19 +19,16 @@ resource "helm_release" "nginx_ingress" {
   cleanup_on_fail = true
   namespace       = local.namespace
   wait            = true
-
   set {
     name  = "controller.service.externalTrafficPolicy"
     value = "Local"
     type  = "string"
   }
-
   set {
     name  = "controller.kind"
     value = "DaemonSet"
     type  = "string"
   }
-
   depends_on = [kubernetes_namespace.ingress_namespace]
 }
 
@@ -52,17 +49,11 @@ resource "kubernetes_ingress" "ingress" {
       "cert-manager.io/cluster-issuer" = "letsencrypt"
     }
   }
-
   spec {
     tls {
-      hosts = [
-        var.domain,
-        "api.${var.domain}",
-        "realtime.${var.domain}"
-      ]
+      hosts       = [var.domain, "api.${var.domain}", "realtime.${var.domain}"]
       secret_name = "auth-demo-tls"
     }
-
     rule {
       host = var.domain
       http {
@@ -74,7 +65,6 @@ resource "kubernetes_ingress" "ingress" {
         }
       }
     }
-
     rule {
       host = "api.${var.domain}"
       http {
@@ -86,7 +76,6 @@ resource "kubernetes_ingress" "ingress" {
         }
       }
     }
-
     rule {
       host = "realtime.${var.domain}"
       http {
@@ -99,8 +88,6 @@ resource "kubernetes_ingress" "ingress" {
       }
     }
   }
-
   wait_for_load_balancer = true
   depends_on             = [helm_release.nginx_ingress]
 }
-

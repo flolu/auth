@@ -6,6 +6,7 @@ const url = config.mongoURL
 const user = config.mongoUser
 const password = config.mongoPassword
 const databaseName = config.mongoDatabase
+
 const client = new mongodb.MongoClient(url, {auth: {username: user, password}})
 
 async function collection<T>(name: string) {
