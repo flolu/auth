@@ -2,10 +2,11 @@ import {v4 as uuidv4} from 'uuid'
 
 import {UserDocument} from '@shared'
 
-import {database} from './database'
+import {config} from './config'
+import {databaseClient} from './database'
 
 function collection() {
-  return database.collection<UserDocument>('users')
+  return databaseClient.db(config.mongoDatabase).collection<UserDocument>('users')
 }
 
 export async function setupUserIndexes() {

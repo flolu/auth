@@ -34,15 +34,14 @@ const defaultCookieOptions: CookieOptions = {
   path: '/',
 }
 
-const cookieOptions = {
-  refresh: {
-    ...defaultCookieOptions,
-    maxAge: TokenExpiration.Refresh * 1000,
-  },
-  access: {
-    ...defaultCookieOptions,
-    maxAge: TokenExpiration.Access * 1000,
-  },
+const refreshTokenCookieOptions: CookieOptions = {
+  ...defaultCookieOptions,
+  maxAge: TokenExpiration.Refresh * 1000,
+}
+
+const accessTokenCookieOptions: CookieOptions = {
+  ...defaultCookieOptions,
+  maxAge: TokenExpiration.Access * 1000,
 }
 
 export function verifyRefreshToken(token: string) {
@@ -66,17 +65,20 @@ export function buildTokens(user: UserDocument) {
 }
 
 export function setTokens(res: Response, access: string, refresh?: string) {
-  res.cookie(Cookies.AccessToken, access, cookieOptions.access)
-  if (refresh) res.cookie(Cookies.RefreshToken, refresh, cookieOptions.refresh)
+  res.cookie(Cookies.AccessToken, access, accessTokenCookieOptions)
+  if (refresh) res.cookie(Cookies.RefreshToken, refresh, refreshTokenCookieOptions)
 }
 
 export function refreshTokens(current: RefreshToken, tokenVersion: number) {
   if (tokenVersion !== current.version) throw 'Token revoked'
+
   const accessPayload: AccessTokenPayload = {userId: current.userId}
   let refreshPayload: RefreshTokenPayload | undefined
 
-  const secondsUntilExpiration =
-    (new Date(current.exp * 1000).getTime() - new Date().getTime()) / 1000
+  const expiration = new Date(current.exp * 1000)
+  const now = new Date()
+  const secondsUntilExpiration = (expiration.getTime() - now.getTime()) / 1000
+
   if (secondsUntilExpiration < TokenExpiration.RefreshIfLessThan) {
     refreshPayload = {userId: current.userId, version: tokenVersion}
   }

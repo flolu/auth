@@ -16,20 +16,17 @@ interface UserResponse {
   name: string
 }
 
-const tokenURL = 'https://github.com/login/oauth/access_token'
-const userURL = 'https://api.github.com/user'
+const TOKEN_URL = 'https://github.com/login/oauth/access_token'
+const USER_URL = 'https://api.github.com/user'
 
 export async function getGitHubUser(code: string) {
   const token = await getAccessToken(code)
-  const response = await axios.get<UserResponse>(userURL, {
-    headers: {Authorization: `Bearer ${token}`},
-  })
-  return response.data as GitHubUser
+  return getUser(token)
 }
 
 async function getAccessToken(code: string) {
   const response = await axios.post<AccessTokenResponse>(
-    tokenURL,
+    TOKEN_URL,
     {
       client_id: config.gitHubClientId,
       client_secret: config.gitHubClientSecret,
@@ -39,5 +36,14 @@ async function getAccessToken(code: string) {
       headers: {Accept: 'application/json'},
     }
   )
+
   return response.data.access_token
+}
+
+async function getUser(token: string) {
+  const response = await axios.get<UserResponse>(USER_URL, {
+    headers: {Authorization: `Bearer ${token}`},
+  })
+
+  return response.data as GitHubUser
 }

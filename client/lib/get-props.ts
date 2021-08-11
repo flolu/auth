@@ -6,7 +6,7 @@ import {environment} from './environment'
 import {QueryResponse} from './fetcher'
 import {fetcherSSR} from './fetcher-ssr'
 
-export interface GetPropsParams {
+interface GetPropsParams {
   context: GetServerSidePropsContext
   fetcher: <T>(url: string) => Promise<QueryResponse<T>>
   user: UserDocument

@@ -6,7 +6,7 @@ import {Cookies} from '@shared'
 
 import {authMiddleware} from './auth-middleware'
 import {config} from './config'
-import {database} from './database'
+import {databaseClient} from './database'
 import {getGitHubUser} from './github-adapter'
 import {buildTokens, clearTokens, refreshTokens, setTokens, verifyRefreshToken} from './token-utils'
 import {
@@ -18,10 +18,11 @@ import {
 } from './user-service'
 
 const app = express()
-app.use(cors({credentials: true, origin: true}))
+
+app.use(cors({credentials: true, origin: config.clientUrl}))
 app.use(cookieParser())
 
-app.get('/', (req, res) => res.send('api'))
+app.get('/', (req, res) => res.send('api is healthy'))
 
 app.get('/github', async (req, res) => {
   const {code} = req.query
@@ -58,6 +59,7 @@ app.post('/logout', authMiddleware, (req, res) => {
 
 app.post('/logout-all', authMiddleware, async (req, res) => {
   await increaseTokenVersion(res.locals.token.userId)
+
   clearTokens(res)
   res.end()
 })
@@ -67,7 +69,11 @@ app.get('/me', authMiddleware, async (req, res) => {
   res.json(user)
 })
 
-database.client.connect().then(async () => {
+async function main() {
+  await databaseClient.connect()
   await setupUserIndexes()
+
   app.listen(3000)
-})
+}
+
+main()

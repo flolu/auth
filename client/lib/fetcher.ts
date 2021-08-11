@@ -9,16 +9,14 @@ export const refreshTokens = async () => {
   await axios.post(`${environment.apiUrl}/refresh`, undefined, {withCredentials: true})
 }
 
-const handleRequest = async <T>(
-  executeRequest: () => Promise<AxiosResponse<T>>
-): Promise<AxiosResponse<T>> => {
+const handleRequest = async (request: () => Promise<AxiosResponse>): Promise<AxiosResponse> => {
   try {
-    return await executeRequest()
+    return await request()
   } catch (error) {
     if (error?.response?.status === 401) {
       try {
         await refreshTokens()
-        return await await executeRequest()
+        return await request()
       } catch (innerError) {
         throw getError(innerError)
       }
@@ -30,9 +28,8 @@ const handleRequest = async <T>(
 
 export const fetcher = async <T>(url: string): Promise<QueryResponse<T>> => {
   try {
-    const {data} = await handleRequest<T>(() => {
-      return axios.get(url, {withCredentials: true})
-    })
+    const request = () => axios.get(url, {withCredentials: true})
+    const {data} = await handleRequest(request)
     return [null, data]
   } catch (error) {
     return [error, null]
@@ -41,9 +38,8 @@ export const fetcher = async <T>(url: string): Promise<QueryResponse<T>> => {
 
 export const poster = async <T>(url: string, payload?: unknown): Promise<QueryResponse<T>> => {
   try {
-    const {data} = await handleRequest<T>(() => {
-      return axios.post<T>(url, payload, {withCredentials: true})
-    })
+    const request = () => axios.post(url, payload, {withCredentials: true})
+    const {data} = await handleRequest(request)
     return [null, data]
   } catch (error) {
     return [error, null]

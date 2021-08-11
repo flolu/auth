@@ -12,6 +12,7 @@ interface AuthenticatedSocket extends WebSocket {
 
 const server = createServer((req, res) => res.end())
 const wss = new WebSocket.Server({noServer: true})
+
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET!
 
 server.on('upgrade', (request: IncomingMessage, socket: Socket, head: Buffer) => {

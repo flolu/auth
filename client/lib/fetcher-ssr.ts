@@ -24,19 +24,20 @@ const refreshTokens = async (req: IncomingMessage, res: ServerResponse) => {
 const handleRequest = async (
   req: IncomingMessage,
   res: ServerResponse,
-  executeRequest: () => Promise<AxiosResponse>
+  request: () => Promise<AxiosResponse>
 ) => {
   try {
-    return await executeRequest()
+    return await request()
   } catch (error) {
     if (error?.response?.status === 401) {
       try {
         await refreshTokens(req, res)
-        return await executeRequest()
+        return await request()
       } catch (innerError) {
         throw getError(innerError)
       }
     }
+
     throw getError(error)
   }
 }
@@ -47,9 +48,8 @@ export const fetcherSSR = async <T>(
   url: string
 ): Promise<QueryResponse<T>> => {
   try {
-    const {data} = await handleRequest(req, res, () => {
-      return axios.get(url, {headers: {cookie: req.headers.cookie}})
-    })
+    const request = () => axios.get(url, {headers: {cookie: req.headers.cookie}})
+    const {data} = await handleRequest(req, res, request)
     return [null, data]
   } catch (error) {
     return [error, null]

@@ -13,5 +13,6 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
   }
 
   res.locals.token = token
+
   next()
 }
