@@ -78,7 +78,7 @@ Coming soon
 2. Sign into your project `gcloud auth application-default login`
 3. Create the bucket for storing Terraform state (`make create-terraform-bucket`)
 4. Set `terraform.backend.bucket` in [infrastructure/main.tf](infrastructure/main.tf) to `TF_BUCKET`
-5. Insert secrets into Google Cloud Secret Manager
+5. Insert secrets into Google Cloud [Secret Manager](https://console.cloud.google.com/security/secret-manager)
    - GitHub OAuth (create [here](https://github.com/settings/developers))
      - Set "Authorization callback URL" to `https://${DOMAIN}/github`
      - `github_client_id`
@@ -91,7 +91,7 @@ Coming soon
      - `mongodbatlas_public_key`
      - `mongodbatlas_private_key`
      - `atlas_project_id` (found under Settings)
-6. Add `0.0.0.0/0` to your MongoDB Atlas project "IP Access List"
+6. Add `0.0.0.0/0` to your MongoDB Atlas project "IP Access List" (Under Network Access)
 7. Enable [Container Registry](https://cloud.google.com/container-registry) in your GCP console
 8. `make init-infrastructure`
 9. `make deploy`

@@ -1,3 +1,4 @@
+variable "name" { default = "client" }
 variable "image" { type = string }
 variable "environment" { type = string }
 variable "api_url" { type = string }

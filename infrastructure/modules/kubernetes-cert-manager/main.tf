@@ -18,7 +18,7 @@ resource "helm_release" "cert_manager" {
   }
 }
 
-# Uncomment after the first run of deploy
+# Uncomment after the first run of deploy (read README.md)
 # resource "kubernetes_manifest" "cluster_issuer" {
 #   manifest = {
 #     apiVersion = "cert-manager.io/v1"
