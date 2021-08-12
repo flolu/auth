@@ -90,6 +90,6 @@ export function refreshTokens(current: RefreshToken, tokenVersion: number) {
 }
 
 export function clearTokens(res: Response) {
-  res.clearCookie(Cookies.AccessToken)
-  res.clearCookie(Cookies.RefreshToken)
+  res.cookie(Cookies.AccessToken, '', {...defaultCookieOptions, maxAge: 0})
+  res.cookie(Cookies.RefreshToken, '', {...defaultCookieOptions, maxAge: 0})
 }

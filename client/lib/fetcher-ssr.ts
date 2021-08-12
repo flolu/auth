@@ -1,8 +1,6 @@
 import axios, {AxiosResponse} from 'axios'
 import {IncomingMessage, ServerResponse} from 'http'
 
-import {RefreshTokensServer} from '@shared'
-
 import {environment} from './environment'
 import {getError} from './errors'
 import {QueryResponse} from './fetcher'
@@ -10,11 +8,9 @@ import {QueryResponse} from './fetcher'
 const SET_COOKIE_HEADER = 'set-cookie'
 
 const refreshTokens = async (req: IncomingMessage, res: ServerResponse) => {
-  const response = await axios.post<RefreshTokensServer>(
-    `${environment.apiUrl}/refresh`,
-    undefined,
-    {headers: {cookie: req.headers.cookie}}
-  )
+  const response = await axios.post(`${environment.apiUrl}/refresh`, undefined, {
+    headers: {cookie: req.headers.cookie},
+  })
   const cookies = response.headers[SET_COOKIE_HEADER]
 
   req.headers.cookie = cookies

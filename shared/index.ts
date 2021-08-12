@@ -10,11 +10,6 @@ export interface UserDocument {
   gitHubUserId: string
 }
 
-export interface RefreshTokensServer {
-  accessToken: string
-  refreshToken?: string
-}
-
 export interface AccessTokenPayload {
   userId: string
 }
