@@ -80,7 +80,7 @@ Coming soon
 4. Set `terraform.backend.bucket` in [infrastructure/main.tf](infrastructure/main.tf) to `TF_BUCKET`
 5. Insert secrets into Google Cloud [Secret Manager](https://console.cloud.google.com/security/secret-manager)
    - GitHub OAuth (create [here](https://github.com/settings/developers))
-     - Set "Authorization callback URL" to `https://${DOMAIN}/github`
+     - Set "Authorization callback URL" to `https://api.${DOMAIN}/github`
      - `github_client_id`
      - `github_client_secret`
    - Secrets (generate [here](https://randomkeygen.com))
