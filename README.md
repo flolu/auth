@@ -5,21 +5,20 @@
   <br>
   <h1>Auth Demo</h1>
   <p>Demo for Access/Refresh Token Authentication</p>
+  <img src=".github/demo.gif" alt="Demo application preview">
 </div>
 
 # Tutorial
 
-<!-- TODO insert YouTube tutorial -->
-
-Coming soon
-
-<!-- TODO GIF of demo -->
+![](.github/thumbnail.jpg)(https://youtu.be/xMsJPnjiRAc)
 
 # Stack
 
 **Backend**: Node.js, Typescript, MongoDB, Kubernetes
 
 **Frontend**: Next.js, Typescript
+
+**DevOps**: Docker, Terraform, Kubernetes, Google Cloud
 
 # Usage
 
