@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = "flolu-auth-demo-test-322608-terraform-state"
+    bucket = "flolu-auth-demo-terraform-state"
     prefix = "production"
   }
 }

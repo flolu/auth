@@ -15,8 +15,8 @@ backend:
 
 # Deployment
 
-GCP_PROJECT=flolu-auth-demo-test-322608
-TF_BUCKET=flolu-auth-demo-test-322608-terraform-state
+GCP_PROJECT=flolu-auth-demo
+TF_BUCKET=flolu-auth-demo-terraform-state
 DOMAIN=auth.flolu.de
 EMAIL=flo@drakery.com
 GKE_ZONE=europe-west3-a
@@ -67,7 +67,7 @@ create-terraform-bucket:
 	gsutil versioning set on ${TF_BUCKET_URI}
 
 init-infrastructure:
-	cd infrastructure && terraform init -reconfigure
+	cd infrastructure && terraform init
 
 connect-kubernetes:
 	gcloud container clusters get-credentials cluster --zone ${GKE_ZONE} --project ${GCP_PROJECT}
