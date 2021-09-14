@@ -5,12 +5,11 @@
   <br>
   <h1>Auth Demo</h1>
   <p>Demo for Access/Refresh Token Authentication</p>
-  <img src=".github/demo.gif" alt="Demo application preview">
 </div>
 
 # Tutorial
 
-[![](.github/thumbnail.jpg)](https://youtu.be/xMsJPnjiRAc)
+[![](https://img.youtube.com/vi/xMsJPnjiRAc/mqdefault.jpg)](https://youtu.be/xMsJPnjiRAc)
 
 # Stack
 
