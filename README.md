@@ -1,15 +1,15 @@
 <div align="center">
   <a href="https://github.com/flolu/auth">
-    <img width="80px" height="auto" src="./.github/lock.svg" />
+    <img width="80px" height="auto" src="./.github/keys.png" />
   </a>
   <br>
-  <h1>Auth Demo</h1>
-  <p>Demo for Access/Refresh Token Authentication</p>
+  <h1>Fullstack Authentication</h1>
+  <p>Access/Refresh Token Authentication Demo with Node.js And Typescript</p>
+  <a href="https://youtu.be/xMsJPnjiRAc">
+    <img width="320px" height="180px" src="https://img.youtube.com/vi/xMsJPnjiRAc/mqdefault.jpg" style="border-radius: 1rem;" />
+    <p>Watch the YouTube Tutorial</p>
+  </a>
 </div>
-
-# Tutorial
-
-[![](https://img.youtube.com/vi/xMsJPnjiRAc/mqdefault.jpg)](https://youtu.be/xMsJPnjiRAc)
 
 # Stack
 
@@ -98,3 +98,7 @@
 12. The app should be live at `https://${DOMAIN}`
 
 - Every time you want to deploy changes, just run `make deploy`
+
+# Credits
+
+<div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
