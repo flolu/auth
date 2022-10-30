@@ -1,8 +1,4 @@
 <div align="center">
-  <a href="https://github.com/flolu/auth">
-    <img width="80px" height="auto" src="./.github/keys.png" />
-  </a>
-  <br>
   <h1>Fullstack Authentication</h1>
   <p>Access/Refresh Token Authentication Demo with Node.js And Typescript</p>
   <a href="https://youtu.be/xMsJPnjiRAc">
@@ -20,8 +16,6 @@
 **DevOps**: Docker, Terraform, Kubernetes, Google Cloud
 
 # Usage
-
-**Recommended OS**: Ubuntu 20.04 LTS
 
 **Requirements**: Docker, Docker Compose, Yarn, Node.js
 
@@ -98,7 +92,3 @@
 12. The app should be live at `https://${DOMAIN}`
 
 - Every time you want to deploy changes, just run `make deploy`
-
-# Credits
-
-<div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
